@@ -1,0 +1,73 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #0071E3;
+  --color-secondary: #2997FF;
+  --color-accent: #0071E3;
+  --color-background: #FFFFFF;
+  --color-text-primary: #333336;
+  --color-link: #0066CC;
+
+  --font-sans: "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+  --font-display: "SF Pro Display", "Myriad Set Pro", sans-serif;
+
+  --animate-float: float 20s ease-in-out infinite;
+  --animate-fade-in: fadeIn 0.6s ease-out;
+  --animate-slide-up: slideUp 0.5s ease-out;
+}
+
+@keyframes float {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  33% { transform: translate(30px, -30px) rotate(5deg); }
+  66% { transform: translate(-20px, 20px) rotate(-5deg); }
+}
+
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes slideUp {
+  0% { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  background: #FFFFFF;
+  color: #333336;
+  font-family: "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+}
+
+[dir="rtl"] {
+  font-family: "SF Pro Text", "Tajawal", "Cairo", sans-serif;
+}
+
+.glass {
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+}
+
+.container-apple {
+  max-width: 1440px;
+  margin-inline: auto;
+  padding-inline: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .container-apple {
+    padding-inline: 3rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

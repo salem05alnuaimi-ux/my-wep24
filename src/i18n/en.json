@@ -1,0 +1,48 @@
+{
+  "nav": {
+    "home": "Home",
+    "products": "Products",
+    "categories": "Categories",
+    "about": "About",
+    "contact": "Contact",
+    "search": "Search products...",
+    "cart": "Cart",
+    "wishlist": "Wishlist",
+    "account": "Account"
+  },
+  "hero": {
+    "tagline": "Trust earned. Excellence respected.",
+    "title": "YEZHABK",
+    "subtitle": "Premium products, carefully curated, delivered worldwide",
+    "cta_shop": "Shop Now",
+    "cta_learn": "Discover More"
+  },
+  "categories": {
+    "title": "Shop by Category",
+    "shemagh": "Shemagh",
+    "iqal": "Iqal",
+    "watches": "Watches",
+    "pens": "Pens",
+    "misbaha": "Misbaha",
+    "caps": "Caps"
+  },
+  "featured": {
+    "title": "Bestsellers",
+    "subtitle": "Our top picks for you",
+    "view_all": "View All"
+  },
+  "product": {
+    "add_to_cart": "Add to Cart",
+    "buy_now": "Buy Now",
+    "out_of_stock": "Out of Stock",
+    "currency": "OMR"
+  },
+  "footer": {
+    "about_title": "About YEZHABK",
+    "about_text": "Trust earned. Excellence respected. Order via DM or WhatsApp",
+    "links_title": "Quick Links",
+    "contact_title": "Contact Us",
+    "follow_title": "Follow Us",
+    "rights": "© 2026 YEZHABK. All rights reserved"
+  }
+}
