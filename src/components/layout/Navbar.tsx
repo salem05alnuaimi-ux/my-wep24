@@ -19,8 +19,8 @@ export default function Navbar() {
   );
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener("scroll", handleScroll);
+    const handleScroll = () => setScrolled(window.scrollY > 30);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
@@ -34,90 +34,119 @@ export default function Navbar() {
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          scrolled ? "glass shadow-sm" : "bg-transparent"
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+          scrolled
+            ? "glass border-b border-[rgba(201,153,107,0.18)] shadow-[0_1px_40px_rgba(0,0,0,0.08)]"
+            : "bg-transparent"
         }`}
       >
         <nav className="container-apple flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2">
-            <span className="text-xl md:text-2xl font-display font-bold tracking-tight">
+          <Link href="/" className="flex items-center gap-2 group">
+            <span className="font-display text-2xl md:text-3xl font-bold tracking-widest text-gold-gradient transition-opacity duration-300 group-hover:opacity-80">
               {locale === "ar" ? "يزهابك" : "YEZHABK"}
             </span>
           </Link>
 
-          {/* Desktop Links */}
+          {/* Desktop nav links */}
           <ul className="hidden md:flex items-center gap-8">
             {navLinks.map((link) => (
               <li key={link.href}>
                 <Link
                   href={link.href}
-                  className="text-sm text-text-primary hover:text-primary transition-colors"
+                  className="relative text-base text-[#2C1810]/60 hover:text-[#C9996B] transition-colors duration-300 group"
                 >
                   {link.label}
+                  <span className="absolute -bottom-0.5 start-0 h-px w-0 bg-[#C9996B] transition-all duration-300 group-hover:w-full" />
                 </Link>
               </li>
             ))}
           </ul>
 
-          {/* Actions */}
-          <div className="flex items-center gap-2 md:gap-4">
+          {/* Icon actions */}
+          <div className="flex items-center gap-1 md:gap-2">
             {/* Language toggle */}
             <button
               onClick={() => setLocale(locale === "ar" ? "en" : "ar")}
-              className="p-2 hover:bg-gray-100 rounded-full transition-colors flex items-center gap-1"
+              className="p-2.5 text-[#2C1810]/50 hover:text-[#C9996B] rounded-full transition-colors duration-300 flex items-center gap-1"
               aria-label="Toggle language"
             >
-              <Globe size={18} />
-              <span className="text-xs font-medium hidden sm:inline">
+              <Globe size={17} />
+              <span className="text-sm font-medium hidden sm:inline tracking-wide">
                 {locale === "ar" ? "EN" : "ع"}
               </span>
             </button>
 
             <button
               onClick={() => setSearchOpen(true)}
-              className="p-2 hover:bg-gray-100 rounded-full transition-colors hidden sm:block"
+              className="p-2.5 text-[#2C1810]/50 hover:text-[#C9996B] rounded-full transition-colors duration-300 hidden sm:flex"
               aria-label={t.nav.search}
             >
-              <Search size={20} />
+              <Search size={18} />
             </button>
 
             <Link
               href="/wishlist"
-              className="p-2 hover:bg-gray-100 rounded-full transition-colors hidden sm:block"
+              className="p-2.5 text-[#2C1810]/50 hover:text-[#C9996B] rounded-full transition-colors duration-300 hidden sm:flex"
               aria-label={t.nav.wishlist}
             >
-              <Heart size={20} />
+              <Heart size={18} />
             </Link>
 
             <Link
               href="/account"
-              className="p-2 hover:bg-gray-100 rounded-full transition-colors hidden sm:block"
+              className="p-2.5 text-[#2C1810]/50 hover:text-[#C9996B] rounded-full transition-colors duration-300 hidden sm:flex"
               aria-label={t.nav.account}
             >
-              <User size={20} />
+              <User size={18} />
             </Link>
 
             <Link
               href="/cart"
-              className="p-2 hover:bg-gray-100 rounded-full transition-colors relative"
+              className="p-2.5 text-[#2C1810]/50 hover:text-[#C9996B] rounded-full transition-colors duration-300 relative"
               aria-label={t.nav.cart}
             >
-              <ShoppingBag size={20} />
+              <ShoppingBag size={18} />
               {totalItems > 0 && (
-                <span className="absolute -top-1 -right-1 bg-primary text-white text-[10px] rounded-full min-w-[16px] h-4 px-1 flex items-center justify-center font-medium">
+                <motion.span
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  className="absolute -top-0.5 -right-0.5 bg-[#C9996B] text-white text-[9px] rounded-full min-w-[15px] h-[15px] px-0.5 flex items-center justify-center font-semibold"
+                >
                   {totalItems}
-                </span>
+                </motion.span>
               )}
             </Link>
 
-            {/* Mobile menu button */}
+            {/* Mobile hamburger */}
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
-              className="md:hidden p-2 hover:bg-gray-100 rounded-full transition-colors"
+              className="md:hidden p-2.5 text-[#2C1810]/50 hover:text-[#C9996B] rounded-full transition-colors duration-300"
               aria-label="Menu"
             >
-              {mobileOpen ? <X size={20} /> : <Menu size={20} />}
+              <AnimatePresence mode="wait" initial={false}>
+                {mobileOpen ? (
+                  <motion.span
+                    key="x"
+                    initial={{ rotate: -90, opacity: 0 }}
+                    animate={{ rotate: 0, opacity: 1 }}
+                    exit={{ rotate: 90, opacity: 0 }}
+                    transition={{ duration: 0.18 }}
+                  >
+                    <X size={20} />
+                  </motion.span>
+                ) : (
+                  <motion.span
+                    key="menu"
+                    initial={{ rotate: 90, opacity: 0 }}
+                    animate={{ rotate: 0, opacity: 1 }}
+                    exit={{ rotate: -90, opacity: 0 }}
+                    transition={{ duration: 0.18 }}
+                  >
+                    <Menu size={20} />
+                  </motion.span>
+                )}
+              </AnimatePresence>
             </button>
           </div>
         </nav>
@@ -126,35 +155,48 @@ export default function Navbar() {
         <AnimatePresence>
           {mobileOpen && (
             <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              className="md:hidden glass border-t border-gray-200/50 overflow-hidden"
+              initial={{ opacity: 0, y: -12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -12 }}
+              transition={{ duration: 0.22, ease: "easeOut" }}
+              className="md:hidden bg-[#EDE9E7]/97 backdrop-blur-xl border-t border-[rgba(201,153,107,0.18)] overflow-hidden"
             >
-              <ul className="container-apple py-4 flex flex-col gap-4">
-                {navLinks.map((link) => (
-                  <li key={link.href}>
+              <ul className="container-apple py-6 flex flex-col gap-5">
+                {navLinks.map((link, i) => (
+                  <motion.li
+                    key={link.href}
+                    initial={{ opacity: 0, x: -12 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: i * 0.06 }}
+                  >
                     <Link
                       href={link.href}
                       onClick={() => setMobileOpen(false)}
-                      className="block py-2 text-base text-text-primary hover:text-primary"
+                      className="block py-1.5 text-lg text-[#2C1810]/70 hover:text-[#C9996B] transition-colors font-medium tracking-wide"
                     >
                       {link.label}
                     </Link>
-                  </li>
+                  </motion.li>
                 ))}
-                <li>
+                <motion.li
+                  initial={{ opacity: 0, x: -12 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: navLinks.length * 0.06 }}
+                >
                   <button
                     onClick={() => {
                       setMobileOpen(false);
                       setSearchOpen(true);
                     }}
-                    className="block py-2 text-base text-text-primary hover:text-primary w-full text-start"
+                    className="block py-1.5 text-lg text-[#2C1810]/70 hover:text-[#C9996B] transition-colors font-medium tracking-wide w-full text-start"
                   >
                     {t.nav.search}
                   </button>
-                </li>
+                </motion.li>
               </ul>
+
+              {/* Mobile amber rule */}
+              <div className="gold-rule mx-6 mb-6 opacity-40" />
             </motion.div>
           )}
         </AnimatePresence>

@@ -86,7 +86,7 @@ export const products: Product[] = [
     reviewCount: 2,
     inStock: true,
     stockCount: 23,
-    isNew: true,
+    isNewArrival: true,
     isBestseller: true,
     tags: ["shemagh", "white", "classic", "cotton"],
     createdAt: "2026-04-01T00:00:00Z",
@@ -279,7 +279,7 @@ export const products: Product[] = [
     reviewCount: 0,
     inStock: true,
     stockCount: 20,
-    isNew: true,
+    isNewArrival: true,
     tags: ["misbaha", "crystal", "blue"],
     createdAt: "2026-04-18T00:00:00Z",
   },
@@ -334,7 +334,7 @@ export const products: Product[] = [
     reviewCount: 0,
     inStock: true,
     stockCount: 12,
-    isNew: true,
+    isNewArrival: true,
     tags: ["cap", "loro-piana", "olive"],
     createdAt: "2026-04-12T00:00:00Z",
   },
@@ -393,5 +393,5 @@ export function getRelatedProducts(productId: string, limit = 4): Product[] {
 }
 
 export function getFeaturedProducts(limit = 4): Product[] {
-  return products.filter((p) => p.isBestseller || p.isNew).slice(0, limit);
+  return products.filter((p) => p.isBestseller || p.isNewArrival).slice(0, limit);
 }

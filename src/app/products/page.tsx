@@ -65,10 +65,10 @@ function ProductsContent() {
         />
 
         <div className="mt-6 mb-10">
-          <h1 className="font-display text-4xl md:text-5xl font-bold mb-3">
+          <h1 className="font-display text-5xl md:text-6xl font-bold text-gold-gradient mb-3 tracking-wide">
             {category ? t.categories[category] : t.nav.products}
           </h1>
-          <p className="text-gray-500">
+          <p className="text-[#2C1810]/45 text-base font-medium">
             {locale === "ar"
               ? `${filtered.length} منتج`
               : `${filtered.length} products`}
@@ -106,7 +106,7 @@ function ProductsContent() {
                       originalPrice: p.originalPrice,
                       image: p.images[0],
                       category: p.category,
-                      isNew: p.isNew,
+                      isNewArrival: p.isNewArrival,
                       inStock: p.inStock,
                     }}
                     index={i}

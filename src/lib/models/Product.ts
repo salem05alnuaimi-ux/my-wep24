@@ -27,7 +27,7 @@ const ProductSchema = new Schema({
   reviewCount: { type: Number, default: 0 },
   inStock: { type: Boolean, default: true },
   stockCount: { type: Number, default: 0 },
-  isNew: Boolean,
+  isNewArrival: Boolean,
   isBestseller: Boolean,
   tags: [String],
 }, { timestamps: true });

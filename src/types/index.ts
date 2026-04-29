@@ -43,7 +43,7 @@ export interface Product {
   reviewCount: number;
   inStock: boolean;
   stockCount: number;
-  isNew?: boolean;
+  isNewArrival?: boolean;
   isBestseller?: boolean;
   tags: string[];
   createdAt: string;

@@ -109,7 +109,7 @@ export default function ProductDetailPage() {
             <div className="space-y-6">
               {/* Badges */}
               <div className="flex gap-2 flex-wrap">
-                {product.isNew && (
+                {product.isNewArrival && (
                   <span className="bg-primary text-white text-xs px-3 py-1 rounded-full">
                     {locale === "ar" ? "جديد" : "New"}
                   </span>
@@ -340,7 +340,7 @@ export default function ProductDetailPage() {
                       originalPrice: p.originalPrice,
                       image: p.images[0],
                       category: p.category,
-                      isNew: p.isNew,
+                      isNewArrival: p.isNewArrival,
                       inStock: p.inStock,
                     }}
                     index={i}
