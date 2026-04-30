@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>الكوبونات — يزهابك</title>
+<link rel="stylesheet" href="shared.css"/>
+</head>
+<body>
+<div class="admin-layout">
+  <aside class="sidebar" id="sidebar"></aside>
+  <div style="flex:1;min-width:0;">
+    <header class="topbar" id="topbar"></header>
+    <main class="main-content">
+      <div class="page-header">
+        <div class="page-header-row">
+          <div>
+            <h1 class="page-title">الكوبونات</h1>
+            <p class="page-subtitle" id="countLabel">جاري التحميل...</p>
+          </div>
+          <button class="btn btn-primary" onclick="openAdd()">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+            كوبون جديد
+          </button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="filter-bar">
+          <div class="filter-search">
+            <span class="filter-search-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/></svg></span>
+            <input type="text" id="searchInput" placeholder="بحث بكود الكوبون..." oninput="applyFilters()"/>
+          </div>
+          <select class="filter-select" id="statusFilter" onchange="applyFilters()">
+            <option value="">كل الحالات</option>
+            <option value="active">نشط</option>
+            <option value="inactive">منتهي/معطل</option>
+          </select>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>الكود</th>
+                <th>النوع</th>
+                <th>القيمة</th>
+                <th>الحد الأدنى</th>
+                <th>الاستخدامات</th>
+                <th>الانتهاء</th>
+                <th>الحالة</th>
+                <th style="width:80px">الإجراءات</th>
+              </tr>
+            </thead>
+            <tbody id="couponsTbody"></tbody>
+          </table>
+        </div>
+        <div class="pagination" id="pagination"></div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- Coupon Modal -->
+<div class="modal-overlay" id="couponModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="modal-title" id="couponModalTitle">إضافة كوبون جديد</h2>
+      <button class="modal-close" onclick="closeModal('couponModal')"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">كود الكوبون <span style="color:var(--red)">*</span></label>
+          <div style="display:flex;gap:8px">
+            <input type="text" class="form-input" id="couponCode" placeholder="EID2026" style="text-transform:uppercase;flex:1"/>
+            <button class="btn btn-secondary btn-sm" onclick="genCode()" style="flex-shrink:0">توليد</button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">نوع الخصم <span style="color:var(--red)">*</span></label>
+          <select class="form-select" id="couponType" onchange="updateValueLabel()">
+            <option value="percent">نسبة مئوية (%)</option>
+            <option value="fixed">مبلغ ثابت (OMR)</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" id="valueLabel">قيمة الخصم (%) <span style="color:var(--red)">*</span></label>
+          <input type="number" class="form-input" id="couponValue" placeholder="20" min="0"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">الحد الأدنى للطلب (OMR)</label>
+          <input type="number" class="form-input" id="couponMin" placeholder="0" min="0" step="0.001"/>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">الحد الأقصى للاستخدامات</label>
+          <input type="number" class="form-input" id="couponMaxUses" placeholder="100" min="1"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">تاريخ الانتهاء</label>
+          <input type="date" class="form-input" id="couponExpiry"/>
+        </div>
+      </div>
+      <div class="toggle-wrap mt-2">
+        <label class="toggle">
+          <input type="checkbox" id="couponActive" checked/>
+          <span class="toggle-track"></span>
+        </label>
+        <span class="toggle-label">كوبون نشط</span>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('couponModal')">إلغاء</button>
+      <button class="btn btn-primary" onclick="saveCoupon()">حفظ الكوبون</button>
+    </div>
+  </div>
+</div>
+
+<script src="shared.js"></script>
+<script>
+  seedIfEmpty();
+  injectLayout();
+
+  let coupons=[], filtered=[], page=1, perPage=10, editId=null;
+
+  function load(){
+    coupons=DB.get('coupons',[]);
+    applyFilters();
+  }
+
+  function applyFilters(){
+    const q=document.getElementById('searchInput').value.toLowerCase();
+    const st=document.getElementById('statusFilter').value;
+    const now=Date.now();
+    filtered=coupons.filter(c=>{
+      const expired=new Date(c.expiry).getTime()<now;
+      const isActive=c.active&&!expired;
+      if(st==='active'&&!isActive) return false;
+      if(st==='inactive'&&isActive) return false;
+      return !q||c.code.toLowerCase().includes(q);
+    });
+    page=1; render();
+  }
+
+  function render(){
+    const {items,total,pages}=paginate(filtered,page,perPage);
+    document.getElementById('countLabel').textContent=`${total} كوبون`;
+    const tbody=document.getElementById('couponsTbody');
+    const now=Date.now();
+    if(!items.length){
+      tbody.innerHTML=`<tr><td colspan="8"><div class="empty-state"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 14.25l6-6m4.5-3.493V21.75l-3.75-1.5-3.75 1.5-3.75-1.5-3.75 1.5V4.757c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0c1.1.128 1.907 1.077 1.907 2.185ZM9.75 9h.008v.008H9.75V9Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm4.125 4.5h.008v.008h-.008V13.5Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z"/></svg><p>لا توجد كوبونات</p></div></td></tr>`;
+      document.getElementById('pagination').innerHTML=''; return;
+    }
+    tbody.innerHTML=items.map(c=>{
+      const expired=new Date(c.expiry).getTime()<now;
+      const isActive=c.active&&!expired;
+      const pct=c.maxUses?Math.round((c.used/c.maxUses)*100):0;
+      return `<tr>
+        <td>
+          <div style="display:flex;align-items:center;gap:8px">
+            <code style="background:rgba(138,28,20,0.08);color:var(--red);padding:3px 8px;border-radius:6px;font-size:13px;font-weight:700;letter-spacing:0.05em">${c.code}</code>
+            <button class="btn btn-ghost btn-icon btn-sm" onclick="navigator.clipboard.writeText('${c.code}').then(()=>toast('تم النسخ'))" title="نسخ">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 0 1-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 0 1 1.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 0 0-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 0 1-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 0 0-3.375-3.375h-1.5a1.125 1.125 0 0 1-1.125-1.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H9.75"/></svg>
+            </button>
+          </div>
+        </td>
+        <td><span class="badge badge-gray">${c.type==='percent'?'نسبة %':'مبلغ ثابت'}</span></td>
+        <td style="font-weight:700;color:var(--red)">${c.value}${c.type==='percent'?'%':' OMR'}</td>
+        <td>${c.minOrder?c.minOrder+' OMR':'-'}</td>
+        <td>
+          <div style="font-size:12px">${c.used}/${c.maxUses||'∞'}</div>
+          ${c.maxUses?`<div style="margin-top:4px;height:4px;background:var(--bg-footer);border-radius:2px;border:1px solid var(--border)"><div style="height:100%;width:${pct}%;background:var(--red);border-radius:2px;transition:width 0.3s"></div></div>`:''}
+        </td>
+        <td style="font-size:12px;${expired?'color:#dc2626':''}">${fmtDate(c.expiry)}${expired?' (منتهي)':''}</td>
+        <td><span class="badge ${isActive?'badge-green':'badge-gray'}">${isActive?'نشط':'معطل'}</span></td>
+        <td>
+          <div class="table-actions">
+            <button class="btn btn-ghost btn-icon btn-sm" onclick="editCoupon('${c.id}')" title="تعديل"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125"/></svg></button>
+            <button class="btn btn-danger btn-icon btn-sm" onclick="deleteCoupon('${c.id}')" title="حذف"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"/></svg></button>
+          </div>
+        </td>
+      </tr>`;
+    }).join('');
+    renderPagination(total,pages);
+  }
+
+  function renderPagination(total,pages){
+    const el=document.getElementById('pagination');
+    const start=(page-1)*perPage+1,end=Math.min(page*perPage,total);
+    let btns=`<button class="page-btn" onclick="goPage(${page-1})" ${page<=1?'disabled':''}><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"/></svg></button>`;
+    for(let i=1;i<=pages;i++) btns+=`<button class="page-btn${i===page?' active':''}" onclick="goPage(${i})">${i}</button>`;
+    btns+=`<button class="page-btn" onclick="goPage(${page+1})" ${page>=pages?'disabled':''}><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m15.75 19.5-7.5-7.5 7.5-7.5"/></svg></button>`;
+    el.innerHTML=`<span class="pagination-info">عرض ${start}–${end} من ${total}</span><div class="pagination-btns">${btns}</div>`;
+  }
+  function goPage(p){if(p<1||p>Math.ceil(filtered.length/perPage))return;page=p;render();}
+
+  function updateValueLabel(){
+    const type=document.getElementById('couponType').value;
+    document.getElementById('valueLabel').textContent=`قيمة الخصم (${type==='percent'?'%':'OMR'})`;
+  }
+
+  function genCode(){
+    const chars='ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    const code=Array.from({length:8},()=>chars[Math.floor(Math.random()*chars.length)]).join('');
+    document.getElementById('couponCode').value=code;
+  }
+
+  function openAdd(){
+    editId=null;
+    ['couponCode','couponValue','couponMin','couponMaxUses'].forEach(id=>{document.getElementById(id).value='';});
+    document.getElementById('couponType').value='percent';
+    document.getElementById('couponExpiry').value='';
+    document.getElementById('couponActive').checked=true;
+    updateValueLabel();
+    document.getElementById('couponModalTitle').textContent='إضافة كوبون جديد';
+    openModal('couponModal');
+  }
+
+  function editCoupon(id){
+    const c=coupons.find(x=>x.id===id); if(!c) return;
+    editId=id;
+    document.getElementById('couponCode').value=c.code;
+    document.getElementById('couponType').value=c.type;
+    document.getElementById('couponValue').value=c.value;
+    document.getElementById('couponMin').value=c.minOrder||'';
+    document.getElementById('couponMaxUses').value=c.maxUses||'';
+    document.getElementById('couponExpiry').value=c.expiry?c.expiry.slice(0,10):'';
+    document.getElementById('couponActive').checked=c.active;
+    updateValueLabel();
+    document.getElementById('couponModalTitle').textContent='تعديل الكوبون';
+    openModal('couponModal');
+  }
+
+  function saveCoupon(){
+    const code=document.getElementById('couponCode').value.trim().toUpperCase();
+    const value=parseFloat(document.getElementById('couponValue').value);
+    if(!code||isNaN(value)){toast('يرجى إدخال الكود والقيمة','error');return;}
+    const data={
+      code, type:document.getElementById('couponType').value,
+      value, minOrder:parseFloat(document.getElementById('couponMin').value)||0,
+      maxUses:parseInt(document.getElementById('couponMaxUses').value)||null,
+      expiry:document.getElementById('couponExpiry').value?new Date(document.getElementById('couponExpiry').value).toISOString():'2099-12-31T00:00:00Z',
+      active:document.getElementById('couponActive').checked,
+    };
+    if(editId){
+      coupons=DB.update('coupons',editId,data);
+      toast('تم تحديث الكوبون');
+    } else {
+      data.id='CPN-'+genId().toUpperCase().slice(0,5);
+      data.used=0;
+      coupons=DB.push('coupons',data);
+      toast('تم إضافة الكوبون');
+    }
+    closeModal('couponModal');
+    applyFilters();
+  }
+
+  function deleteCoupon(id){
+    confirmAction('هل تريد حذف هذا الكوبون؟',()=>{
+      coupons=DB.remove('coupons',id);
+      toast('تم حذف الكوبون','info');
+      applyFilters();
+    });
+  }
+
+  load();
+</script>
+</body>
+</html>

@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>العملاء — يزهابك</title>
+<link rel="stylesheet" href="shared.css"/>
+</head>
+<body>
+<div class="admin-layout">
+  <aside class="sidebar" id="sidebar"></aside>
+  <div style="flex:1;min-width:0;">
+    <header class="topbar" id="topbar"></header>
+    <main class="main-content">
+      <div class="page-header">
+        <div class="page-header-row">
+          <div>
+            <h1 class="page-title">العملاء</h1>
+            <p class="page-subtitle" id="countLabel">جاري التحميل...</p>
+          </div>
+          <button class="btn btn-secondary btn-sm" onclick="exportCSV()">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>
+            تصدير
+          </button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="filter-bar">
+          <div class="filter-search">
+            <span class="filter-search-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/></svg></span>
+            <input type="text" id="searchInput" placeholder="بحث بالاسم أو البريد..." oninput="applyFilters()"/>
+          </div>
+          <select class="filter-select" id="countryFilter" onchange="applyFilters()">
+            <option value="">كل الدول</option>
+            <option value="عمان">عمان</option>
+            <option value="الإمارات">الإمارات</option>
+          </select>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>العميل</th>
+                <th>الدولة</th>
+                <th>الهاتف</th>
+                <th>الطلبات</th>
+                <th>القيمة الكلية</th>
+                <th>تاريخ التسجيل</th>
+                <th style="width:80px">الإجراءات</th>
+              </tr>
+            </thead>
+            <tbody id="customersTbody"></tbody>
+          </table>
+        </div>
+        <div class="pagination" id="pagination"></div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- Customer Detail Modal -->
+<div class="modal-overlay" id="customerModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="modal-title" id="customerModalTitle">تفاصيل العميل</h2>
+      <button class="modal-close" onclick="closeModal('customerModal')"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/></svg></button>
+    </div>
+    <div class="modal-body" id="customerModalBody"></div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('customerModal')">إغلاق</button>
+      <button class="btn btn-primary" id="waBtn">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" style="width:16px;height:16px"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.112 1.528 5.843L.057 23.776a.5.5 0 0 0 .607.645l6.102-1.452A11.942 11.942 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.91 0-3.71-.497-5.28-1.37l-.38-.22-3.946.938.9-3.862-.248-.392A9.955 9.955 0 0 1 2 12c0-5.514 4.486-10 10-10s10 4.486 10 10-4.486 10-10 10z"/></svg>
+        واتساب
+      </button>
+    </div>
+  </div>
+</div>
+
+<script src="shared.js"></script>
+<script>
+  seedIfEmpty();
+  injectLayout();
+
+  let customers=[], filtered=[], page=1, perPage=10;
+
+  function load() {
+    customers = DB.get('customers',[]);
+    applyFilters();
+  }
+
+  function applyFilters() {
+    const q  = document.getElementById('searchInput').value.toLowerCase();
+    const co = document.getElementById('countryFilter').value;
+    filtered = customers.filter(c=>
+      (!q  || c.name.toLowerCase().includes(q) || (c.email||'').toLowerCase().includes(q)) &&
+      (!co || c.country===co)
+    );
+    page=1; render();
+  }
+
+  function render() {
+    const {items,total,pages} = paginate(filtered,page,perPage);
+    document.getElementById('countLabel').textContent=`${total} عميل`;
+    const tbody=document.getElementById('customersTbody');
+    if(!items.length){
+      tbody.innerHTML=`<tr><td colspan="7"><div class="empty-state"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z"/></svg><p>لا يوجد عملاء</p></div></td></tr>`;
+      document.getElementById('pagination').innerHTML=''; return;
+    }
+    tbody.innerHTML=items.map(c=>`
+      <tr>
+        <td>
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--red-light),var(--red-dark));display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:700;flex-shrink:0">${c.name[0]}</div>
+            <div>
+              <div style="font-weight:600;font-size:13px">${c.name}</div>
+              <div style="font-size:11px;color:var(--text-muted)">${c.email||''}</div>
+            </div>
+          </div>
+        </td>
+        <td><span class="badge badge-gray">${c.country}</span></td>
+        <td style="font-size:13px;direction:ltr">${c.phone}</td>
+        <td style="font-weight:600">${c.orders}</td>
+        <td style="font-weight:700;color:var(--red)">${c.total.toFixed(3)} OMR</td>
+        <td style="font-size:12px;color:var(--text-muted)">${fmtDate(c.joinDate)}</td>
+        <td>
+          <button class="btn btn-ghost btn-icon btn-sm" onclick="viewCustomer('${c.id}')" title="عرض">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/></svg>
+          </button>
+        </td>
+      </tr>`).join('');
+    renderPagination(total,pages);
+  }
+
+  function renderPagination(total,pages){
+    const el=document.getElementById('pagination');
+    const start=(page-1)*perPage+1,end=Math.min(page*perPage,total);
+    let btns=`<button class="page-btn" onclick="goPage(${page-1})" ${page<=1?'disabled':''}><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"/></svg></button>`;
+    for(let i=1;i<=pages;i++) btns+=`<button class="page-btn${i===page?' active':''}" onclick="goPage(${i})">${i}</button>`;
+    btns+=`<button class="page-btn" onclick="goPage(${page+1})" ${page>=pages?'disabled':''}><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m15.75 19.5-7.5-7.5 7.5-7.5"/></svg></button>`;
+    el.innerHTML=`<span class="pagination-info">عرض ${start}–${end} من ${total}</span><div class="pagination-btns">${btns}</div>`;
+  }
+  function goPage(p){if(p<1||p>Math.ceil(filtered.length/perPage))return;page=p;render();}
+
+  let _currentCustomer=null;
+  function viewCustomer(id){
+    const c=customers.find(x=>x.id===id); if(!c) return;
+    _currentCustomer=c;
+    document.getElementById('customerModalTitle').textContent=c.name;
+    const orders=DB.get('orders',[]).filter(o=>o.customer===c.name);
+    document.getElementById('customerModalBody').innerHTML=`
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:20px">
+        <div style="background:var(--bg-footer);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px;text-align:center">
+          <div style="font-size:22px;font-weight:700;color:var(--red)">${c.orders}</div>
+          <div style="font-size:11px;color:var(--text-muted)">إجمالي الطلبات</div>
+        </div>
+        <div style="background:var(--bg-footer);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px;text-align:center">
+          <div style="font-size:22px;font-weight:700;color:var(--red)">${c.total.toFixed(3)}</div>
+          <div style="font-size:11px;color:var(--text-muted)">القيمة الكلية (OMR)</div>
+        </div>
+        <div style="background:var(--bg-footer);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px;text-align:center">
+          <div style="font-size:22px;font-weight:700;color:var(--red)">${c.country}</div>
+          <div style="font-size:11px;color:var(--text-muted)">الدولة</div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px">
+        <div style="display:flex;gap:12px"><span style="color:var(--text-muted);font-size:12px;width:80px">الهاتف:</span><span style="direction:ltr;font-size:13px;font-weight:600">${c.phone}</span></div>
+        <div style="display:flex;gap:12px"><span style="color:var(--text-muted);font-size:12px;width:80px">البريد:</span><span style="font-size:13px;font-weight:600">${c.email||'-'}</span></div>
+        <div style="display:flex;gap:12px"><span style="color:var(--text-muted);font-size:12px;width:80px">منذ:</span><span style="font-size:13px;font-weight:600">${fmtDate(c.joinDate)}</span></div>
+      </div>
+      ${orders.length?`<div style="font-size:12px;font-weight:700;color:var(--text-muted);margin-bottom:8px">طلبات العميل</div>
+      <div style="border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden">
+        <table style="min-width:auto"><thead><tr><th>رقم الطلب</th><th>الإجمالي</th><th>الحالة</th><th>التاريخ</th></tr></thead>
+        <tbody>${orders.map(o=>`<tr><td style="font-weight:600;color:var(--red)">${o.id}</td><td>${o.total.toFixed(3)} OMR</td><td><span class="badge badge-gray">${o.status}</span></td><td style="font-size:12px">${fmtDate(o.date)}</td></tr>`).join('')}</tbody></table>
+      </div>`:'<div style="text-align:center;color:var(--text-muted);font-size:13px;padding:16px">لا توجد طلبات لهذا العميل</div>'}`;
+    document.getElementById('waBtn').onclick=()=>{
+      const msg=encodeURIComponent(`مرحباً ${c.name}،\nشكراً لتسوقك من متجر يزهابك.`);
+      window.open(`https://wa.me/${c.phone.replace(/[^0-9]/g,'')}?text=${msg}`,'_blank');
+    };
+    openModal('customerModal');
+  }
+
+  function exportCSV(){
+    const rows=[['الاسم','البريد','الهاتف','الدولة','الطلبات','القيمة الكلية','تاريخ التسجيل']];
+    filtered.forEach(c=>rows.push([c.name,c.email||'',c.phone,c.country,c.orders,c.total,fmtDate(c.joinDate)]));
+    const csv='﻿'+rows.map(r=>r.map(x=>`"${x}"`).join(',')).join('\n');
+    const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+    a.download=`customers-${Date.now()}.csv`;a.click();
+  }
+
+  load();
+</script>
+</body>
+</html>

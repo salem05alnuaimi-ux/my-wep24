@@ -5,6 +5,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight, ArrowLeft } from "lucide-react";
 import { useLanguage } from "@/store/languageStore";
+import Button from "@/components/ui/Button";
 
 const HeroBackground = dynamic(() => import("./HeroBackground"), { ssr: false });
 
@@ -37,10 +38,10 @@ export default function Hero() {
       <div className="container-apple text-center relative z-10 flex flex-col items-center">
         {/* Eyebrow */}
         <motion.div {...rise(0)} className="mb-6">
-          <span className="inline-flex items-center gap-3 text-sm md:text-base text-[rgba(184,92,56,0.95)] font-medium tracking-[0.35em] uppercase drop-shadow-sm">
-            <span className="w-8 h-px bg-[rgba(184,92,56,0.5)]" />
+          <span className="inline-flex items-center gap-3 text-sm md:text-base text-primary/95 font-medium tracking-[0.35em] uppercase drop-shadow-sm">
+            <span className="w-8 h-px bg-primary/50" />
             {t.hero.tagline}
-            <span className="w-8 h-px bg-[rgba(184,92,56,0.5)]" />
+            <span className="w-8 h-px bg-primary/50" />
           </span>
         </motion.div>
 
@@ -69,24 +70,22 @@ export default function Hero() {
           {...rise(0.35)}
           className="flex flex-col sm:flex-row items-center justify-center gap-4"
         >
-          <Link
-            href="/products"
-            className="group relative overflow-hidden bg-[#B85C38] text-white px-10 py-4 rounded-full font-bold tracking-wide hover:bg-[#CC7050] transition-all duration-300 flex items-center gap-2.5 text-base shadow-[0_0_30px_rgba(184,92,56,0.35)]"
-          >
-            <span>{t.hero.cta_shop}</span>
-            <Arrow
-              size={18}
-              className={`transition-transform duration-300 ${
-                isRtl ? "group-hover:-translate-x-1" : "group-hover:translate-x-1"
-              }`}
-            />
+          <Link href="/products">
+            <Button variant="primary" size="lg" className="group" as="span">
+              <span>{t.hero.cta_shop}</span>
+              <Arrow
+                size={18}
+                className={`transition-transform duration-300 ${
+                  isRtl ? "group-hover:-translate-x-1" : "group-hover:translate-x-1"
+                }`}
+              />
+            </Button>
           </Link>
 
-          <Link
-            href="/about"
-            className="px-10 py-4 rounded-full text-base font-semibold text-[#B85C38] border-2 border-[rgba(184,92,56,0.45)] hover:border-[rgba(184,92,56,0.8)] hover:bg-[rgba(184,92,56,0.12)] backdrop-blur-sm transition-all duration-300 tracking-wide"
-          >
-            {t.hero.cta_learn}
+          <Link href="/about">
+            <Button variant="outline" size="lg" as="span">
+              {t.hero.cta_learn}
+            </Button>
           </Link>
         </motion.div>
 
@@ -104,7 +103,7 @@ export default function Hero() {
               <p
                 className="font-display text-3xl md:text-4xl font-bold mb-0.5"
                 style={{
-                  background: "linear-gradient(135deg, #E09070, #CC7050, #B85C38)",
+                  background: "linear-gradient(135deg, var(--color-red-light), var(--color-red), var(--color-red-dark))",
                   WebkitBackgroundClip: "text",
                   WebkitTextFillColor: "transparent",
                   backgroundClip: "text",
@@ -113,7 +112,7 @@ export default function Hero() {
               >
                 {stat.num}
               </p>
-              <p className="text-xs md:text-sm text-[rgba(184,92,56,0.85)] tracking-[0.15em] uppercase font-medium">
+              <p className="text-xs md:text-sm text-primary/85 tracking-[0.15em] uppercase font-medium">
                 {stat.label}
               </p>
             </div>
@@ -127,8 +126,8 @@ export default function Hero() {
         transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" as const }}
         className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 z-10"
       >
-        <div className="w-px h-10 bg-gradient-to-b from-transparent via-[rgba(184,92,56,0.6)] to-transparent" />
-        <span className="text-xs text-[#B85C38]/50 tracking-[0.3em] uppercase">
+        <div className="w-px h-10 bg-gradient-to-b from-transparent via-primary/60 to-transparent" />
+        <span className="text-xs text-primary/50 tracking-[0.3em] uppercase">
           {locale === "ar" ? "انزل" : "Scroll"}
         </span>
       </motion.div>

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { ToastContainer } from "@/components/ui/Toast";
 import CartDrawer from "@/components/cart/CartDrawer";
+import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
 
 export const metadata: Metadata = {
   title: "YEZHABK | يزهابك - ثقة تُبنى وتميّز يُحترم",
@@ -61,6 +62,7 @@ export default function RootLayout({
         `}</style>
       </head>
       <body className="antialiased">
+        <GoogleAnalytics />
         {children}
         <CartDrawer />
         <ToastContainer />

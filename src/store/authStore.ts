@@ -14,32 +14,6 @@ interface AuthStore {
   updateProfile: (data: Partial<User>) => void;
 }
 
-// Mock users (replaced with real API in Step 7)
-const MOCK_USERS_KEY = "yezhabk-mock-users";
-
-const getMockUsers = (): Array<User & { password: string }> => {
-  if (typeof window === "undefined") return [];
-  const stored = localStorage.getItem(MOCK_USERS_KEY);
-  if (stored) return JSON.parse(stored);
-  // Seed with admin
-  const seed = [
-    {
-      id: "admin-1",
-      name: "Salem Admin",
-      email: "admin@yezhabk.om",
-      password: "admin123",
-      role: "admin" as const,
-      createdAt: new Date().toISOString(),
-    },
-  ];
-  localStorage.setItem(MOCK_USERS_KEY, JSON.stringify(seed));
-  return seed;
-};
-
-const saveMockUsers = (users: Array<User & { password: string }>) => {
-  localStorage.setItem(MOCK_USERS_KEY, JSON.stringify(users));
-};
-
 export const useAuth = create<AuthStore>()(
   persist(
     (set) => ({
@@ -50,62 +24,44 @@ export const useAuth = create<AuthStore>()(
 
       login: async (email, password) => {
         set({ isLoading: true });
-        await new Promise((r) => setTimeout(r, 600)); // simulate latency
-        const users = getMockUsers();
-        const user = users.find(
-          (u) => u.email.toLowerCase() === email.toLowerCase() && u.password === password
-        );
-
-        if (!user) {
+        try {
+          const res = await fetch("/api/auth/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password }),
+          });
+          const data = await res.json();
+          if (!res.ok) {
+            set({ isLoading: false });
+            return { ok: false, error: data.error ?? "Login failed" };
+          }
+          set({ user: data.user, token: data.token, isAuthenticated: true, isLoading: false });
+          return { ok: true };
+        } catch {
           set({ isLoading: false });
-          return { ok: false, error: "Invalid credentials" };
+          return { ok: false, error: "Network error" };
         }
-
-        const { password: _, ...safeUser } = user;
-        const token = `mock-token-${user.id}-${Date.now()}`;
-
-        set({
-          user: safeUser,
-          token,
-          isAuthenticated: true,
-          isLoading: false,
-        });
-        return { ok: true };
       },
 
       register: async (name, email, password, phone) => {
         set({ isLoading: true });
-        await new Promise((r) => setTimeout(r, 600));
-        const users = getMockUsers();
-
-        if (users.find((u) => u.email.toLowerCase() === email.toLowerCase())) {
+        try {
+          const res = await fetch("/api/auth/register", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name, email, password, phone }),
+          });
+          const data = await res.json();
+          if (!res.ok) {
+            set({ isLoading: false });
+            return { ok: false, error: data.error ?? "Registration failed" };
+          }
+          set({ user: data.user, token: data.token, isAuthenticated: true, isLoading: false });
+          return { ok: true };
+        } catch {
           set({ isLoading: false });
-          return { ok: false, error: "Email already registered" };
+          return { ok: false, error: "Network error" };
         }
-
-        const newUser = {
-          id: `user-${Date.now()}`,
-          name,
-          email,
-          phone,
-          password,
-          role: "customer" as const,
-          createdAt: new Date().toISOString(),
-        };
-
-        users.push(newUser);
-        saveMockUsers(users);
-
-        const { password: _, ...safeUser } = newUser;
-        const token = `mock-token-${newUser.id}-${Date.now()}`;
-
-        set({
-          user: safeUser,
-          token,
-          isAuthenticated: true,
-          isLoading: false,
-        });
-        return { ok: true };
       },
 
       logout: () => set({ user: null, token: null, isAuthenticated: false }),

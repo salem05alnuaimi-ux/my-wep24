@@ -15,7 +15,7 @@ const ProductSchema = new Schema({
   variants: [{
     id: String,
     name: BilingualText,
-    type: String,
+    type: { type: String },
     value: String,
     image: String,
     stock: Number,

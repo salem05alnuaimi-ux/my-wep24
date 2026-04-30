@@ -2,33 +2,33 @@
 
 /* ── Design Tokens ───────────────────────────────────────── */
 :root {
-  --color-green-dark:   #3A4D41;
-  --color-green:        #4C6054;
-  --color-green-light:  #6B8C7A;
-  --color-green-pale:   #A8C0B4;
-  --color-green-subtle: rgba(76,96,84,0.12);
-  --color-green-border: rgba(76,96,84,0.22);
-  --color-green-border-strong: rgba(76,96,84,0.5);
+  --color-red-dark:   #68100B;
+  --color-red:        #8A1C14;
+  --color-red-light:  #A62626;
+  --color-red-pale:   #E6B0AC;
+  --color-red-subtle: rgba(138, 28, 20, 0.12);
+  --color-red-border: rgba(138, 28, 20, 0.22);
+  --color-red-border-strong: rgba(138, 28, 20, 0.5);
 
-  --color-bg:       #DADADA;
-  --color-bg-footer:#C4C4C4;
+  --color-bg:       #F4F4F3;
+  --color-bg-footer:#E8E8E6;
   --color-text:     #1A1A1A;
 
   --font-display: "HacenNewspaper", "Amiri", Georgia, serif;
   --font-body:    "Dima", "Palestine", "Noto Naskh Arabic", "Cairo", system-ui, sans-serif;
 
-  --shadow-glow:       0 0 30px rgba(76,96,84,0.2), 0 0 60px rgba(76,96,84,0.08);
-  --shadow-glow-hover: 0 0 40px rgba(76,96,84,0.3), 0 0 80px rgba(76,96,84,0.12), inset 0 0 0 1px rgba(76,96,84,0.2);
-  --shadow-btn:        0 0 30px rgba(76,96,84,0.35);
+  --shadow-glow:       0 0 30px rgba(138, 28, 20, 0.2), 0 0 60px rgba(138, 28, 20, 0.08);
+  --shadow-glow-hover: 0 0 40px rgba(138, 28, 20, 0.3), 0 0 80px rgba(138, 28, 20, 0.12), inset 0 0 0 1px rgba(138, 28, 20, 0.2);
+  --shadow-btn:        0 0 30px rgba(138, 28, 20, 0.35);
 }
 
 @theme {
-  --color-primary: #4C6054;
-  --color-secondary: #6B8C7A;
-  --color-accent: #4C6054;
-  --color-background: #DADADA;
+  --color-primary: #8A1C14;
+  --color-secondary: #A62626;
+  --color-accent: #FF9D23;
+  --color-background: #F4F4F3;
   --color-text-primary: #1A1A1A;
-  --color-link: #4C6054;
+  --color-link: #8A1C14;
 
   --font-sans: "Dima", "Noto Naskh Arabic", "Cairo", "Tajawal", system-ui, sans-serif;
   --font-display: "Hacen Newspaper", "Amiri", Georgia, serif;
@@ -59,6 +59,12 @@
   100% { background-position: 200% center; }
 }
 
+@keyframes shine {
+  0% { left: -20%; opacity: 0; }
+  50% { opacity: 1; }
+  100% { left: 120%; opacity: 0; }
+}
+
 @keyframes pulse-green {
   0%, 100% { opacity: 0.6; }
   50% { opacity: 1; }
@@ -72,7 +78,7 @@ html {
 }
 
 body {
-  background: #DADADA;
+  background: #F4F4F3;
   color: #1A1A1A;
   font-family: "Dima", "Noto Naskh Arabic", "Cairo", "Tajawal", system-ui, sans-serif;
 }
@@ -83,7 +89,7 @@ body {
 
 /* Light navbar glass */
 .glass {
-  background: rgba(218, 218, 218, 0.94);
+  background: rgba(244, 244, 243, 0.94);
   backdrop-filter: saturate(150%) blur(24px);
   -webkit-backdrop-filter: saturate(150%) blur(24px);
 }
@@ -93,26 +99,26 @@ body {
   background: rgba(255, 255, 255, 0.65);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(76, 96, 84, 0.22);
+  border: 1px solid rgba(138, 28, 20, 0.15);
 }
 
-/* Green gradient text */
+/* Green gradient text -> Red gradient text */
 .text-gold-gradient {
-  background: linear-gradient(135deg, #6B8C7A 0%, #4C6054 50%, #3A4D41 100%);
+  background: linear-gradient(135deg, #A62626 0%, #8A1C14 50%, #68100B 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
-/* Animated shimmer green text */
+/* Animated shimmer green text -> Red shimmer text */
 .text-gold-shimmer {
   background: linear-gradient(
     90deg,
-    #3A4D41 0%,
-    #6B8C7A 30%,
-    #A8C0B4 50%,
-    #6B8C7A 70%,
-    #3A4D41 100%
+    #68100B 0%,
+    #A62626 30%,
+    #E6B0AC 50%,
+    #A62626 70%,
+    #68100B 100%
   );
   background-size: 200% auto;
   -webkit-background-clip: text;
@@ -121,11 +127,11 @@ body {
   animation: shimmer 4s linear infinite;
 }
 
-/* Green ambient glow */
+/* Green ambient glow -> Red ambient glow */
 .gold-glow {
   box-shadow:
-    0 0 30px rgba(76, 96, 84, 0.2),
-    0 0 60px rgba(76, 96, 84, 0.08);
+    0 0 30px rgba(138, 28, 20, 0.2),
+    0 0 60px rgba(138, 28, 20, 0.08);
 }
 
 .gold-glow-hover {
@@ -133,19 +139,19 @@ body {
 }
 .gold-glow-hover:hover {
   box-shadow:
-    0 0 40px rgba(76, 96, 84, 0.3),
-    0 0 80px rgba(76, 96, 84, 0.12),
-    inset 0 0 0 1px rgba(76, 96, 84, 0.2);
+    0 0 40px rgba(138, 28, 20, 0.3),
+    0 0 80px rgba(138, 28, 20, 0.12),
+    inset 0 0 0 1px rgba(138, 28, 20, 0.2);
 }
 
-/* Subtle horizontal green rule */
+/* Subtle horizontal green rule -> Red rule */
 .gold-rule {
   height: 1px;
   background: linear-gradient(
     90deg,
     transparent,
-    rgba(76, 96, 84, 0.55) 30%,
-    rgba(76, 96, 84, 0.55) 70%,
+    rgba(138, 28, 20, 0.55) 30%,
+    rgba(138, 28, 20, 0.55) 70%,
     transparent
   );
 }
@@ -167,19 +173,19 @@ body {
   width: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #C4C4C4;
+  background: #E8E8E6;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(76, 96, 84, 0.4);
+  background: rgba(138, 28, 20, 0.4);
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(76, 96, 84, 0.65);
+  background: rgba(138, 28, 20, 0.65);
 }
 
 /* Selection */
 ::selection {
-  background: rgba(76, 96, 84, 0.3);
+  background: rgba(138, 28, 20, 0.3);
   color: #1A1A1A;
 }
 

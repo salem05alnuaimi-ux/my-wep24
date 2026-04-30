@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>تسجيل الدخول — يزهابك</title>
+<link rel="stylesheet" href="shared.css"/>
+<style>
+  body { display:flex; align-items:center; justify-content:center; min-height:100vh;
+         background:var(--bg); }
+  .login-wrap { width:100%; max-width:420px; padding:24px; }
+  .login-card {
+    background:var(--bg-card);
+    border:1px solid var(--border);
+    border-radius:var(--radius-lg);
+    padding:36px 32px;
+    box-shadow:var(--shadow-glow);
+    animation:slideUp 0.4s ease-out;
+  }
+  .login-logo { text-align:center; margin-bottom:28px; }
+  .login-logo-mark {
+    width:56px; height:56px;
+    background:linear-gradient(135deg,var(--red-light),var(--red),var(--red-dark));
+    border-radius:14px;
+    display:flex; align-items:center; justify-content:center;
+    margin:0 auto 12px;
+    box-shadow:var(--shadow-btn);
+  }
+  .login-logo-mark svg { width:28px; height:28px; stroke:#fff; }
+  .login-title {
+    font-family:"HacenNewspaper","Amiri",serif;
+    font-size:22px; font-weight:700;
+    background:linear-gradient(135deg,var(--red-light),var(--red),var(--red-dark));
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+  }
+  .login-sub { font-size:13px; color:var(--text-muted); margin-top:4px; }
+  .login-card .form-input { background:var(--bg); }
+  .input-wrap { position:relative; }
+  .input-icon {
+    position:absolute; right:11px; top:50%; transform:translateY(-50%);
+    color:var(--text-muted); pointer-events:none;
+  }
+  .input-icon svg { width:16px; height:16px; }
+  .input-wrap .form-input { padding-right:38px; }
+  .pw-toggle {
+    position:absolute; left:11px; top:50%; transform:translateY(-50%);
+    background:none; border:none; cursor:pointer;
+    color:var(--text-muted); padding:0;
+  }
+  .pw-toggle:hover { color:var(--red); }
+  .pw-toggle svg { width:16px; height:16px; }
+  .remember-row { display:flex; align-items:center; justify-content:space-between; margin:14px 0; }
+  .remember-check { display:flex; align-items:center; gap:8px; cursor:pointer; font-size:13px; color:var(--text); }
+  .remember-check input[type=checkbox] { accent-color:var(--red); width:15px; height:15px; }
+  .forgot-link { font-size:13px; color:var(--red); text-decoration:none; }
+  .forgot-link:hover { text-decoration:underline; }
+  .login-btn { width:100%; height:44px; justify-content:center; margin-top:6px; font-size:15px; }
+  .login-btn svg { width:18px; height:18px; }
+  .rate-msg {
+    display:none; text-align:center; margin-top:12px;
+    padding:10px 14px; background:rgba(220,38,38,0.08);
+    border:1px solid rgba(220,38,38,0.2); border-radius:var(--radius-sm);
+    font-size:13px; color:#dc2626;
+  }
+  .rate-msg.show { display:block; }
+  .error-msg { display:none; font-size:12px; color:#dc2626; margin-top:5px; }
+  .error-msg.show { display:block; }
+  .dark-toggle {
+    position:fixed; top:20px; left:20px;
+    width:38px; height:38px;
+    background:var(--bg-card); border:1px solid var(--border);
+    border-radius:var(--radius-sm);
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer; color:var(--text-muted);
+    transition:all 0.2s;
+  }
+  .dark-toggle:hover { color:var(--red); border-color:var(--border-md); }
+  .dark-toggle svg { width:18px; height:18px; }
+</style>
+</head>
+<body>
+<button class="dark-toggle" onclick="toggleDark()" title="تبديل المظهر">
+  <svg id="dark-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z"/></svg>
+</button>
+
+<div class="login-wrap">
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="login-logo-mark">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 21v-7.5a.75.75 0 0 1 .75-.75h3a.75.75 0 0 1 .75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.349M3.75 21V9.349m0 0a3.001 3.001 0 0 0 3.75-.615A2.993 2.993 0 0 0 9.75 9.75c.896 0 1.7-.393 2.25-1.016a2.993 2.993 0 0 0 2.25 1.016c.896 0 1.7-.393 2.25-1.016a3.001 3.001 0 0 0 3.75.614m-16.5 0a3.004 3.004 0 0 1-.621-4.72l1.189-1.19A1.5 1.5 0 0 1 5.378 3h13.243a1.5 1.5 0 0 1 1.06.44l1.19 1.189a3 3 0 0 1-.621 4.72M6.75 18h3.75a.75.75 0 0 0 .75-.75V13.5a.75.75 0 0 0-.75-.75H6.75a.75.75 0 0 0-.75.75v3.75c0 .414.336.75.75.75Z"/></svg>
+      </div>
+      <div class="login-title">يزهابك</div>
+      <div class="login-sub">لوحة الإدارة</div>
+    </div>
+
+    <form id="loginForm" onsubmit="handleLogin(event)">
+      <div class="form-group">
+        <label class="form-label">البريد الإلكتروني</label>
+        <div class="input-wrap">
+          <span class="input-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75"/></svg></span>
+          <input type="email" id="email" class="form-input" placeholder="admin@yezhabk.com" autocomplete="email" required/>
+        </div>
+        <div class="error-msg" id="emailErr">البريد الإلكتروني غير صحيح</div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">كلمة المرور</label>
+        <div class="input-wrap">
+          <span class="input-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z"/></svg></span>
+          <input type="password" id="password" class="form-input" placeholder="••••••••" autocomplete="current-password" required/>
+          <button type="button" class="pw-toggle" id="pwToggle" onclick="togglePw()">
+            <svg id="eye-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/></svg>
+          </button>
+        </div>
+        <div class="error-msg" id="pwErr">كلمة المرور غير صحيحة</div>
+      </div>
+
+      <div class="remember-row">
+        <label class="remember-check">
+          <input type="checkbox" id="remember"/> تذكرني
+        </label>
+        <a href="#" class="forgot-link">نسيت كلمة المرور؟</a>
+      </div>
+
+      <button type="submit" class="btn btn-primary login-btn" id="loginBtn">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9"/></svg>
+        تسجيل الدخول
+      </button>
+
+      <div class="rate-msg" id="rateMsg"></div>
+    </form>
+  </div>
+</div>
+
+<script>
+  let attempts = 0, lockedUntil = 0;
+
+  function handleLogin(e) {
+    e.preventDefault();
+    const now = Date.now();
+    if (now < lockedUntil) {
+      const sec = Math.ceil((lockedUntil - now) / 1000);
+      showRate(`تم تجاوز الحد المسموح. يُرجى الانتظار ${sec} ثانية.`);
+      return;
+    }
+    const email = document.getElementById('email').value.trim();
+    const pw = document.getElementById('password').value;
+    const ADMIN_EMAIL = 'admin@yezhabk.com';
+    const ADMIN_PW   = 'yezhabk2026';
+
+    document.getElementById('emailErr').classList.remove('show');
+    document.getElementById('pwErr').classList.remove('show');
+
+    if (email !== ADMIN_EMAIL) {
+      document.getElementById('emailErr').classList.add('show');
+      attempts++;
+    } else if (pw !== ADMIN_PW) {
+      document.getElementById('pwErr').classList.add('show');
+      attempts++;
+    } else {
+      attempts = 0;
+      const btn = document.getElementById('loginBtn');
+      btn.innerHTML = '<svg style="animation:spin 0.8s linear infinite" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"/></svg> جاري التحقق...';
+      btn.disabled = true;
+      if (document.getElementById('remember').checked) {
+        localStorage.setItem('admin_logged_in','1');
+      } else {
+        sessionStorage.setItem('admin_logged_in','1');
+      }
+      setTimeout(() => { window.location.href = 'index.html'; }, 800);
+      return;
+    }
+
+    if (attempts >= 3) {
+      lockedUntil = Date.now() + 30000;
+      showRate('تم تجاوز عدد المحاولات المسموحة. يُرجى الانتظار 30 ثانية.');
+      attempts = 0;
+      startCountdown();
+    }
+  }
+
+  function showRate(msg) {
+    const el = document.getElementById('rateMsg');
+    el.textContent = msg;
+    el.classList.add('show');
+  }
+  function startCountdown() {
+    const interval = setInterval(() => {
+      const rem = Math.ceil((lockedUntil - Date.now()) / 1000);
+      if (rem <= 0) {
+        clearInterval(interval);
+        document.getElementById('rateMsg').classList.remove('show');
+      } else {
+        showRate(`تم تجاوز الحد المسموح. يُرجى الانتظار ${rem} ثانية.`);
+      }
+    }, 1000);
+  }
+  function togglePw() {
+    const inp = document.getElementById('password');
+    inp.type = inp.type === 'password' ? 'text' : 'password';
+  }
+  function toggleDark() {
+    document.documentElement.classList.toggle('dark');
+    localStorage.setItem('admin_dark', document.documentElement.classList.contains('dark') ? '1' : '0');
+  }
+  if (localStorage.getItem('admin_dark') === '1') document.documentElement.classList.add('dark');
+  if (localStorage.getItem('admin_logged_in') === '1' || sessionStorage.getItem('admin_logged_in') === '1') {
+    window.location.href = 'index.html';
+  }
+</script>
+</body>
+</html>
