@@ -58,6 +58,45 @@ const ICONS: Record<string, ReactNode> = {
       <circle cx="20" cy="14" r="2" fill="currentColor" opacity="0.6" />
     </svg>
   ),
+  bracelet: (
+    <svg viewBox="0 0 40 40" fill="none" className="w-8 h-8" aria-hidden="true">
+      <circle cx="20" cy="20" r="12" stroke="currentColor" strokeWidth="2.5" fill="none" opacity="0.9" />
+      <circle cx="20" cy="8" r="2.5" fill="currentColor" opacity="0.8" />
+      <circle cx="20" cy="32" r="2" fill="currentColor" opacity="0.5" />
+      <circle cx="8" cy="20" r="2" fill="currentColor" opacity="0.5" />
+      <circle cx="32" cy="20" r="2" fill="currentColor" opacity="0.5" />
+    </svg>
+  ),
+  ring: (
+    <svg viewBox="0 0 40 40" fill="none" className="w-8 h-8" aria-hidden="true">
+      <circle cx="20" cy="22" r="10" stroke="currentColor" strokeWidth="2.5" fill="none" opacity="0.9" />
+      <circle cx="20" cy="22" r="5.5" stroke="currentColor" strokeWidth="1.5" fill="none" opacity="0.4" />
+      <path d="M16 14 L20 8 L24 14" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" fill="none" opacity="0.9" />
+      <circle cx="20" cy="8" r="2" fill="currentColor" opacity="0.8" />
+    </svg>
+  ),
+  makeup: (
+    <svg viewBox="0 0 40 40" fill="none" className="w-8 h-8" aria-hidden="true">
+      <rect x="14" y="8" width="12" height="20" rx="6" stroke="currentColor" strokeWidth="2" fill="none" opacity="0.9" />
+      <rect x="16" y="28" width="8" height="5" rx="2" stroke="currentColor" strokeWidth="1.5" fill="none" opacity="0.6" />
+      <path d="M17 16 Q20 19 23 16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" fill="none" opacity="0.6" />
+    </svg>
+  ),
+  bags: (
+    <svg viewBox="0 0 40 40" fill="none" className="w-8 h-8" aria-hidden="true">
+      <rect x="7" y="16" width="26" height="18" rx="3" stroke="currentColor" strokeWidth="2" fill="none" opacity="0.9" />
+      <path d="M14 16 L14 12 Q14 8 20 8 Q26 8 26 12 L26 16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" fill="none" opacity="0.7" />
+      <path d="M7 22 L33 22" stroke="currentColor" strokeWidth="1.5" opacity="0.4" />
+    </svg>
+  ),
+  boxes: (
+    <svg viewBox="0 0 40 40" fill="none" className="w-8 h-8" aria-hidden="true">
+      <rect x="7" y="18" width="26" height="16" rx="2" stroke="currentColor" strokeWidth="2" fill="none" opacity="0.9" />
+      <path d="M7 18 L13 10 L27 10 L33 18" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" fill="none" opacity="0.7" />
+      <path d="M7 18 L33 18" stroke="currentColor" strokeWidth="1.5" opacity="0.5" />
+      <path d="M20 18 L20 34" stroke="currentColor" strokeWidth="1.5" opacity="0.4" />
+    </svg>
+  ),
 };
 
 const categories = [
@@ -67,6 +106,11 @@ const categories = [
   { key: "pens", slug: "pens" },
   { key: "misbaha", slug: "misbaha" },
   { key: "caps", slug: "caps" },
+  { key: "bracelet", slug: "bracelet" },
+  { key: "ring", slug: "ring" },
+  { key: "makeup", slug: "makeup" },
+  { key: "bags", slug: "bags" },
+  { key: "boxes", slug: "boxes" },
 ] as const;
 
 export default function Categories() {
@@ -83,7 +127,7 @@ export default function Categories() {
           <div className="gold-rule w-16 mx-auto opacity-40" />
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3 md:gap-4">
           {categories.map((cat, i) => (
             <motion.div
               key={cat.key}

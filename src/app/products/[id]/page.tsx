@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import Navbar from "@/components/layout/Navbar";
@@ -12,7 +12,7 @@ import VariantSelector from "@/components/product/VariantSelector";
 import ProductReviews from "@/components/product/ProductReviews";
 import Rating from "@/components/ui/Rating";
 import ProductCard from "@/components/product/ProductCard";
-import { getProductById, getRelatedProducts } from "@/data/products";
+import { Product } from "@/types";
 import { useLanguage } from "@/store/languageStore";
 import { useCart } from "@/store/cartStore";
 import { useWishlist } from "@/store/wishlistStore";
@@ -26,12 +26,51 @@ export default function ProductDetailPage() {
   const { has, toggle } = useWishlist();
   const { show } = useToast();
 
-  const product = getProductById(params.id as string);
-
-  const [selectedVariantId, setSelectedVariantId] = useState(
-    product?.variants?.[0]?.id
-  );
+  const [product, setProduct] = useState<Product | null>(null);
+  const [related, setRelated] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedVariantId, setSelectedVariantId] = useState<string | undefined>();
   const [qty, setQty] = useState(1);
+
+  useEffect(() => {
+    const slug = params.id as string;
+    fetch(`/api/products/${slug}`)
+      .then((r) => {
+        if (!r.ok) return null;
+        return r.json();
+      })
+      .then((data) => {
+        if (!data) return;
+        setProduct(data.product);
+        setSelectedVariantId(data.product.variants?.[0]?.id);
+        // fetch related (same category)
+        fetch(`/api/products?category=${data.product.category}`)
+          .then((r) => r.json())
+          .then((d) =>
+            setRelated(
+              (d.products ?? [])
+                .filter((p: Product) => p.id !== data.product.id)
+                .slice(0, 4)
+            )
+          );
+      })
+      .finally(() => setLoading(false));
+  }, [params.id]);
+
+  if (loading) {
+    return (
+      <>
+        <FloatingShapes />
+        <Navbar />
+        <main className="pt-24 pb-20 min-h-screen flex items-center justify-center">
+          <p className="text-gray-400 text-lg">
+            {locale === "ar" ? "جارٍ التحميل..." : "Loading..."}
+          </p>
+        </main>
+        <Footer />
+      </>
+    );
+  }
 
   if (!product) {
     return (
@@ -60,7 +99,6 @@ export default function ProductDetailPage() {
   const inStock = selectedVariant ? selectedVariant.stock > 0 : product.inStock;
   const maxQty = selectedVariant?.stock ?? product.stockCount;
   const isWishlisted = has(product.id);
-  const related = getRelatedProducts(product.id, 4);
 
   const handleAddToCart = () => {
     addItem(product, selectedVariant, qty);
@@ -99,15 +137,9 @@ export default function ProductDetailPage() {
           />
 
           <div className="mt-8 grid lg:grid-cols-2 gap-12">
-            {/* Gallery */}
-            <ProductGallery
-              images={product.images}
-              alt={product.name[locale]}
-            />
+            <ProductGallery images={product.images} alt={product.name[locale]} />
 
-            {/* Details */}
             <div className="space-y-6">
-              {/* Badges */}
               <div className="flex gap-2 flex-wrap">
                 {product.isNewArrival && (
                   <span className="bg-primary text-white text-xs px-3 py-1 rounded-full">
@@ -121,7 +153,6 @@ export default function ProductDetailPage() {
                 )}
               </div>
 
-              {/* Category + Name */}
               <div>
                 <p className="text-sm text-gray-500 uppercase tracking-wide mb-1 capitalize">
                   {product.category}
@@ -131,7 +162,6 @@ export default function ProductDetailPage() {
                 </h1>
               </div>
 
-              {/* Rating */}
               {product.reviewCount > 0 && (
                 <Rating
                   value={product.rating}
@@ -141,7 +171,6 @@ export default function ProductDetailPage() {
                 />
               )}
 
-              {/* Price */}
               <div className="flex items-baseline gap-3 flex-wrap">
                 <span className="text-3xl font-bold text-text-primary">
                   {finalPrice.toFixed(3)} {t.product.currency}
@@ -163,12 +192,10 @@ export default function ProductDetailPage() {
                 )}
               </div>
 
-              {/* Description */}
               <p className="text-gray-600 leading-relaxed">
                 {product.description[locale]}
               </p>
 
-              {/* Variants */}
               {product.variants && product.variants.length > 0 && (
                 <VariantSelector
                   variants={product.variants}
@@ -177,7 +204,6 @@ export default function ProductDetailPage() {
                 />
               )}
 
-              {/* Quantity */}
               <div className="flex items-center gap-4 flex-wrap">
                 <span className="text-sm font-medium">
                   {locale === "ar" ? "الكمية" : "Qty"}
@@ -209,7 +235,6 @@ export default function ProductDetailPage() {
                 </span>
               </div>
 
-              {/* CTA buttons */}
               <div className="flex gap-3">
                 <button
                   onClick={handleAddToCart}
@@ -230,30 +255,15 @@ export default function ProductDetailPage() {
                     isWishlisted ? "Remove from wishlist" : "Add to wishlist"
                   }
                 >
-                  <Heart
-                    size={20}
-                    fill={isWishlisted ? "currentColor" : "none"}
-                  />
+                  <Heart size={20} fill={isWishlisted ? "currentColor" : "none"} />
                 </button>
               </div>
 
-              {/* Trust badges */}
               <div className="grid grid-cols-3 gap-3 pt-4 border-t border-gray-100">
                 {[
-                  {
-                    icon: Truck,
-                    label:
-                      locale === "ar" ? "شحن سريع" : "Fast shipping",
-                  },
-                  {
-                    icon: ShieldCheck,
-                    label: locale === "ar" ? "دفع آمن" : "Secure payment",
-                  },
-                  {
-                    icon: RotateCcw,
-                    label:
-                      locale === "ar" ? "إرجاع ٧ أيام" : "7-day returns",
-                  },
+                  { icon: Truck, label: locale === "ar" ? "شحن سريع" : "Fast shipping" },
+                  { icon: ShieldCheck, label: locale === "ar" ? "دفع آمن" : "Secure payment" },
+                  { icon: RotateCcw, label: locale === "ar" ? "إرجاع ٧ أيام" : "7-day returns" },
                 ].map(({ icon: Icon, label }) => (
                   <div
                     key={label}
@@ -267,47 +277,43 @@ export default function ProductDetailPage() {
             </div>
           </div>
 
-          {/* Features & Specs */}
-          <div className="mt-16 grid md:grid-cols-2 gap-8">
-            <div>
-              <h2 className="font-display text-2xl font-bold mb-4">
-                {locale === "ar" ? "المميزات" : "Features"}
-              </h2>
-              <ul className="space-y-2">
-                {product.features.map((f, i) => (
-                  <li key={i} className="flex items-start gap-2 text-gray-700">
-                    <span className="text-primary mt-1 text-sm">✓</span>
-                    <span>{f[locale]}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {product.specs && product.specs.length > 0 && (
+          {product.features?.length > 0 && (
+            <div className="mt-16 grid md:grid-cols-2 gap-8">
               <div>
                 <h2 className="font-display text-2xl font-bold mb-4">
-                  {locale === "ar" ? "المواصفات" : "Specifications"}
+                  {locale === "ar" ? "المميزات" : "Features"}
                 </h2>
-                <dl>
-                  {product.specs.map((spec, i) => (
-                    <div
-                      key={i}
-                      className="flex justify-between py-3 border-b border-gray-100"
-                    >
-                      <dt className="text-gray-500 text-sm">
-                        {spec.label[locale]}
-                      </dt>
-                      <dd className="font-medium text-sm">
-                        {spec.value[locale]}
-                      </dd>
-                    </div>
+                <ul className="space-y-2">
+                  {product.features.map((f, i) => (
+                    <li key={i} className="flex items-start gap-2 text-gray-700">
+                      <span className="text-primary mt-1 text-sm">✓</span>
+                      <span>{f[locale]}</span>
+                    </li>
                   ))}
-                </dl>
+                </ul>
               </div>
-            )}
-          </div>
 
-          {/* Reviews */}
+              {product.specs && product.specs.length > 0 && (
+                <div>
+                  <h2 className="font-display text-2xl font-bold mb-4">
+                    {locale === "ar" ? "المواصفات" : "Specifications"}
+                  </h2>
+                  <dl>
+                    {product.specs.map((spec, i) => (
+                      <div
+                        key={i}
+                        className="flex justify-between py-3 border-b border-gray-100"
+                      >
+                        <dt className="text-gray-500 text-sm">{spec.label[locale]}</dt>
+                        <dd className="font-medium text-sm">{spec.value[locale]}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                </div>
+              )}
+            </div>
+          )}
+
           <div className="mt-16">
             <h2 className="font-display text-2xl font-bold mb-6">
               {locale === "ar" ? "تقييمات العملاء" : "Customer Reviews"}
@@ -318,12 +324,11 @@ export default function ProductDetailPage() {
               )}
             </h2>
             <ProductReviews
-              reviews={product.reviews}
+              reviews={product.reviews ?? []}
               averageRating={product.rating}
             />
           </div>
 
-          {/* Related products */}
           {related.length > 0 && (
             <div className="mt-16">
               <h2 className="font-display text-2xl font-bold mb-6">
@@ -343,6 +348,7 @@ export default function ProductDetailPage() {
                       isNewArrival: p.isNewArrival,
                       inStock: p.inStock,
                     }}
+                    fullProduct={p}
                     index={i}
                   />
                 ))}

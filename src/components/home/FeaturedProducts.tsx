@@ -1,16 +1,29 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowRight, ArrowLeft } from "lucide-react";
 import { motion } from "framer-motion";
 import { useLanguage } from "@/store/languageStore";
 import ProductCard from "@/components/product/ProductCard";
-import { getFeaturedProducts } from "@/data/products";
+import { Product } from "@/types";
 
 export default function FeaturedProducts() {
   const { locale, t } = useLanguage();
   const Arrow = locale === "ar" ? ArrowLeft : ArrowRight;
-  const featuredProducts = getFeaturedProducts(4);
+  const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
+
+  useEffect(() => {
+    fetch("/api/products")
+      .then((r) => r.json())
+      .then((data) => {
+        const all: Product[] = data.products ?? [];
+        const featured = all
+          .filter((p) => p.isBestseller || p.isNewArrival)
+          .slice(0, 4);
+        setFeaturedProducts(featured.length > 0 ? featured : all.slice(0, 4));
+      });
+  }, []);
 
   return (
     <section className="py-24 md:py-32 relative">
@@ -24,7 +37,6 @@ export default function FeaturedProducts() {
       />
 
       <div className="container-apple relative">
-        {/* Header */}
         <div className="flex items-end justify-between mb-14">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -35,7 +47,8 @@ export default function FeaturedProducts() {
             <p className="text-sm text-[#C9996B]/70 tracking-[0.35em] uppercase mb-3 font-medium">
               {t.featured.subtitle}
             </p>
-            <h2 className="font-display font-bold text-[#2C1810] leading-tight"
+            <h2
+              className="font-display font-bold text-[#2C1810] leading-tight"
               style={{ fontSize: "clamp(2.5rem, 5vw, 4.5rem)" }}
             >
               {t.featured.title}
@@ -56,17 +69,17 @@ export default function FeaturedProducts() {
               <Arrow
                 size={16}
                 className={`transition-transform duration-300 ${
-                  locale === "ar" ? "group-hover:-translate-x-1" : "group-hover:translate-x-1"
+                  locale === "ar"
+                    ? "group-hover:-translate-x-1"
+                    : "group-hover:translate-x-1"
                 }`}
               />
             </Link>
           </motion.div>
         </div>
 
-        {/* Amber rule */}
         <div className="gold-rule mb-14 opacity-30" />
 
-        {/* Product grid */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5">
           {featuredProducts.map((product, i) => (
             <ProductCard
@@ -81,12 +94,12 @@ export default function FeaturedProducts() {
                 isNewArrival: product.isNewArrival,
                 inStock: product.inStock,
               }}
+              fullProduct={product}
               index={i}
             />
           ))}
         </div>
 
-        {/* Mobile view-all */}
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}

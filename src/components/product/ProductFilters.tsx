@@ -32,6 +32,11 @@ export default function ProductFilters({
     { value: "pens", label: t.categories.pens },
     { value: "misbaha", label: t.categories.misbaha },
     { value: "caps", label: t.categories.caps },
+    { value: "bracelet", label: t.categories.bracelet },
+    { value: "ring", label: t.categories.ring },
+    { value: "makeup", label: t.categories.makeup },
+    { value: "bags", label: t.categories.bags },
+    { value: "boxes", label: t.categories.boxes },
   ];
 
   const sortOptions: { value: SortOption; label: string }[] = [

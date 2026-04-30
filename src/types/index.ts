@@ -55,7 +55,12 @@ export type ProductCategory =
   | "watches"
   | "pens"
   | "misbaha"
-  | "caps";
+  | "caps"
+  | "bracelet"
+  | "ring"
+  | "makeup"
+  | "bags"
+  | "boxes";
 
 export type SortOption =
   | "newest"

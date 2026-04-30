@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Navbar from "@/components/layout/Navbar";
@@ -9,8 +9,7 @@ import FloatingShapes from "@/components/effects/FloatingShapes";
 import ProductCard from "@/components/product/ProductCard";
 import ProductFilters from "@/components/product/ProductFilters";
 import Breadcrumb from "@/components/ui/Breadcrumb";
-import { products } from "@/data/products";
-import { ProductCategory, SortOption } from "@/types";
+import { Product, ProductCategory, SortOption } from "@/types";
 import { useLanguage } from "@/store/languageStore";
 
 function ProductsContent() {
@@ -23,36 +22,46 @@ function ProductsContent() {
   );
   const [sort, setSort] = useState<SortOption>("newest");
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000]);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const url = category ? `/api/products?category=${category}` : "/api/products";
+    fetch(url)
+      .then((r) => r.json())
+      .then((data) => setProducts(data.products ?? []))
+      .finally(() => setLoading(false));
+  }, [category]);
 
   const filtered = useMemo(() => {
-    let list = [...products];
-    if (category) list = list.filter((p) => p.category === category);
-    list = list.filter(
+    let list = products.filter(
       (p) => p.price >= priceRange[0] && p.price <= priceRange[1]
     );
 
     switch (sort) {
       case "price-asc":
-        list.sort((a, b) => a.price - b.price);
+        list = [...list].sort((a, b) => a.price - b.price);
         break;
       case "price-desc":
-        list.sort((a, b) => b.price - a.price);
+        list = [...list].sort((a, b) => b.price - a.price);
         break;
       case "rating":
-        list.sort((a, b) => b.rating - a.rating);
+        list = [...list].sort((a, b) => b.rating - a.rating);
         break;
       case "bestseller":
-        list.sort((a, b) => Number(!!b.isBestseller) - Number(!!a.isBestseller));
+        list = [...list].sort(
+          (a, b) => Number(!!b.isBestseller) - Number(!!a.isBestseller)
+        );
         break;
       case "newest":
       default:
-        list.sort(
+        list = [...list].sort(
           (a, b) =>
             new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
         );
     }
     return list;
-  }, [category, sort, priceRange]);
+  }, [products, sort, priceRange]);
 
   return (
     <main className="pt-24 pb-20">
@@ -86,7 +95,13 @@ function ProductsContent() {
           />
 
           <div className="flex-1">
-            {filtered.length === 0 ? (
+            {loading ? (
+              <div className="text-center py-20">
+                <p className="text-gray-400 text-lg">
+                  {locale === "ar" ? "جارٍ التحميل..." : "Loading..."}
+                </p>
+              </div>
+            ) : filtered.length === 0 ? (
               <div className="text-center py-20">
                 <p className="text-gray-500 text-lg">
                   {locale === "ar"
@@ -109,6 +124,7 @@ function ProductsContent() {
                       isNewArrival: p.isNewArrival,
                       inStock: p.inStock,
                     }}
+                    fullProduct={p}
                     index={i}
                   />
                 ))}
