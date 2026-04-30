@@ -36,7 +36,7 @@ export default function Navbar() {
       <header
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
           scrolled
-            ? "glass border-b border-[rgba(201,153,107,0.18)] shadow-[0_1px_40px_rgba(0,0,0,0.08)]"
+            ? "glass border-b border-[rgba(255,157,35,0.18)] shadow-[0_1px_40px_rgba(0,0,0,0.08)]"
             : "bg-transparent"
         }`}
       >
@@ -54,10 +54,14 @@ export default function Navbar() {
               <li key={link.href}>
                 <Link
                   href={link.href}
-                  className="relative text-base text-[#2C1810]/60 hover:text-[#C9996B] transition-colors duration-300 group"
+                  className={`relative text-base transition-colors duration-300 group ${
+                    scrolled
+                      ? "text-[#1A1A1A]/70 hover:text-[#FF9D23]"
+                      : "text-[rgba(255,157,35,0.85)] hover:text-[#FFCC80]"
+                  }`}
                 >
                   {link.label}
-                  <span className="absolute -bottom-0.5 start-0 h-px w-0 bg-[#C9996B] transition-all duration-300 group-hover:w-full" />
+                  <span className="absolute -bottom-0.5 start-0 h-px w-0 bg-[#FF9D23] transition-all duration-300 group-hover:w-full" />
                 </Link>
               </li>
             ))}
@@ -68,7 +72,9 @@ export default function Navbar() {
             {/* Language toggle */}
             <button
               onClick={() => setLocale(locale === "ar" ? "en" : "ar")}
-              className="p-2.5 text-[#2C1810]/50 hover:text-[#C9996B] rounded-full transition-colors duration-300 flex items-center gap-1"
+              className={`p-2.5 rounded-full transition-colors duration-300 flex items-center gap-1 ${
+                scrolled ? "text-[#1A1A1A]/60 hover:text-[#FF9D23]" : "text-[rgba(255,157,35,0.9)] hover:text-[#FFCC80]"
+              }`}
               aria-label="Toggle language"
             >
               <Globe size={17} />
@@ -79,7 +85,9 @@ export default function Navbar() {
 
             <button
               onClick={() => setSearchOpen(true)}
-              className="p-2.5 text-[#2C1810]/50 hover:text-[#C9996B] rounded-full transition-colors duration-300 hidden sm:flex"
+              className={`p-2.5 rounded-full transition-colors duration-300 hidden sm:flex ${
+                scrolled ? "text-[#1A1A1A]/60 hover:text-[#FF9D23]" : "text-[rgba(255,157,35,0.8)] hover:text-[#FFCC80]"
+              }`}
               aria-label={t.nav.search}
             >
               <Search size={18} />
@@ -87,7 +95,9 @@ export default function Navbar() {
 
             <Link
               href="/wishlist"
-              className="p-2.5 text-[#2C1810]/50 hover:text-[#C9996B] rounded-full transition-colors duration-300 hidden sm:flex"
+              className={`p-2.5 rounded-full transition-colors duration-300 hidden sm:flex ${
+                scrolled ? "text-[#1A1A1A]/60 hover:text-[#FF9D23]" : "text-[rgba(255,157,35,0.8)] hover:text-[#FFCC80]"
+              }`}
               aria-label={t.nav.wishlist}
             >
               <Heart size={18} />
@@ -95,7 +105,9 @@ export default function Navbar() {
 
             <Link
               href="/account"
-              className="p-2.5 text-[#2C1810]/50 hover:text-[#C9996B] rounded-full transition-colors duration-300 hidden sm:flex"
+              className={`p-2.5 rounded-full transition-colors duration-300 hidden sm:flex ${
+                scrolled ? "text-[#1A1A1A]/60 hover:text-[#FF9D23]" : "text-[rgba(255,157,35,0.8)] hover:text-[#FFCC80]"
+              }`}
               aria-label={t.nav.account}
             >
               <User size={18} />
@@ -103,7 +115,9 @@ export default function Navbar() {
 
             <Link
               href="/cart"
-              className="p-2.5 text-[#2C1810]/50 hover:text-[#C9996B] rounded-full transition-colors duration-300 relative"
+              className={`p-2.5 rounded-full transition-colors duration-300 relative ${
+                scrolled ? "text-[#1A1A1A]/60 hover:text-[#FF9D23]" : "text-[rgba(255,157,35,0.8)] hover:text-[#FFCC80]"
+              }`}
               aria-label={t.nav.cart}
             >
               <ShoppingBag size={18} />
@@ -111,7 +125,7 @@ export default function Navbar() {
                 <motion.span
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
-                  className="absolute -top-0.5 -right-0.5 bg-[#C9996B] text-white text-[9px] rounded-full min-w-[15px] h-[15px] px-0.5 flex items-center justify-center font-semibold"
+                  className="absolute -top-0.5 -right-0.5 bg-[#FF9D23] text-white text-[9px] rounded-full min-w-[15px] h-[15px] px-0.5 flex items-center justify-center font-semibold"
                 >
                   {totalItems}
                 </motion.span>
@@ -121,7 +135,9 @@ export default function Navbar() {
             {/* Mobile hamburger */}
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
-              className="md:hidden p-2.5 text-[#2C1810]/50 hover:text-[#C9996B] rounded-full transition-colors duration-300"
+              className={`md:hidden p-2.5 rounded-full transition-colors duration-300 ${
+                scrolled ? "text-[#1A1A1A]/60 hover:text-[#FF9D23]" : "text-[rgba(255,157,35,0.9)] hover:text-[#FFCC80]"
+              }`}
               aria-label="Menu"
             >
               <AnimatePresence mode="wait" initial={false}>
@@ -159,7 +175,7 @@ export default function Navbar() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -12 }}
               transition={{ duration: 0.22, ease: "easeOut" }}
-              className="md:hidden bg-[#EDE9E7]/97 backdrop-blur-xl border-t border-[rgba(201,153,107,0.18)] overflow-hidden"
+              className="md:hidden bg-[#F4F4F3]/97 backdrop-blur-xl border-t border-[rgba(255,157,35,0.18)] overflow-hidden"
             >
               <ul className="container-apple py-6 flex flex-col gap-5">
                 {navLinks.map((link, i) => (
@@ -172,7 +188,7 @@ export default function Navbar() {
                     <Link
                       href={link.href}
                       onClick={() => setMobileOpen(false)}
-                      className="block py-1.5 text-lg text-[#2C1810]/70 hover:text-[#C9996B] transition-colors font-medium tracking-wide"
+                      className="block py-1.5 text-lg text-[#1A1A1A]/80 hover:text-[#FF9D23] transition-colors font-medium tracking-wide"
                     >
                       {link.label}
                     </Link>
@@ -188,7 +204,7 @@ export default function Navbar() {
                       setMobileOpen(false);
                       setSearchOpen(true);
                     }}
-                    className="block py-1.5 text-lg text-[#2C1810]/70 hover:text-[#C9996B] transition-colors font-medium tracking-wide w-full text-start"
+                    className="block py-1.5 text-lg text-[#1A1A1A]/80 hover:text-[#FF9D23] transition-colors font-medium tracking-wide w-full text-start"
                   >
                     {t.nav.search}
                   </button>

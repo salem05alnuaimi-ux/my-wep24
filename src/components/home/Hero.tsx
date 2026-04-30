@@ -1,9 +1,12 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight, ArrowLeft } from "lucide-react";
 import { useLanguage } from "@/store/languageStore";
+
+const HeroBackground = dynamic(() => import("./HeroBackground"), { ssr: false });
 
 const rise = (delay = 0) => ({
   initial: { opacity: 0, y: 28 },
@@ -18,30 +21,33 @@ export default function Hero() {
 
   return (
     <section className="relative min-h-screen flex flex-col items-center justify-center pt-20 overflow-hidden">
-      {/* Subtle center radial ambient */}
+      {/* 3D Blob Background */}
+      <HeroBackground />
+
+      {/* Soft radial overlay so text stays readable at center */}
       <div
-        className="absolute inset-0 pointer-events-none"
+        className="absolute inset-0 pointer-events-none z-[1]"
         aria-hidden="true"
         style={{
           background:
-            "radial-gradient(ellipse 80% 60% at 50% 40%, rgba(201,153,107,0.1) 0%, transparent 70%)",
+            "radial-gradient(ellipse 80% 70% at 50% 50%, rgba(244,244,243,0.0) 0%, rgba(244,244,243,0.30) 55%, rgba(244,244,243,0.72) 100%)",
         }}
       />
 
       <div className="container-apple text-center relative z-10 flex flex-col items-center">
         {/* Eyebrow */}
         <motion.div {...rise(0)} className="mb-6">
-          <span className="inline-flex items-center gap-3 text-sm md:text-base text-[#C9996B]/80 font-medium tracking-[0.35em] uppercase">
-            <span className="w-8 h-px bg-[#C9996B]/40" />
+          <span className="inline-flex items-center gap-3 text-sm md:text-base text-[rgba(255,185,80,0.95)] font-medium tracking-[0.35em] uppercase drop-shadow-sm">
+            <span className="w-8 h-px bg-[rgba(255,157,35,0.5)]" />
             {t.hero.tagline}
-            <span className="w-8 h-px bg-[#C9996B]/40" />
+            <span className="w-8 h-px bg-[rgba(255,157,35,0.5)]" />
           </span>
         </motion.div>
 
         {/* Main heading */}
         <motion.h1
           {...rise(0.1)}
-          className="font-display font-bold leading-[0.88] tracking-tight mb-8 text-[#2C1810]"
+          className="font-display font-bold leading-[0.88] tracking-tight mb-8"
           style={{ fontSize: "clamp(4.5rem, 14vw, 12rem)" }}
         >
           <span className="block text-gold-shimmer">{t.hero.title}</span>
@@ -53,7 +59,7 @@ export default function Hero() {
         {/* Subtitle */}
         <motion.p
           {...rise(0.25)}
-          className="text-lg md:text-xl text-[#2C1810]/55 max-w-lg mx-auto mb-12 font-medium leading-relaxed"
+          className="text-lg md:text-xl text-[#1A1A1A]/70 max-w-lg mx-auto mb-12 font-medium leading-relaxed"
         >
           {t.hero.subtitle}
         </motion.p>
@@ -65,51 +71,49 @@ export default function Hero() {
         >
           <Link
             href="/products"
-            className="group relative overflow-hidden bg-[#C9996B] text-white px-10 py-4 rounded-full font-bold tracking-wide hover:bg-[#D4A574] transition-all duration-300 flex items-center gap-2.5 text-base shadow-[0_0_30px_rgba(201,153,107,0.35)]"
+            className="group relative overflow-hidden bg-[#FF9D23] text-white px-10 py-4 rounded-full font-bold tracking-wide hover:bg-[#FFB347] transition-all duration-300 flex items-center gap-2.5 text-base shadow-[0_0_30px_rgba(255,157,35,0.35)]"
           >
             <span>{t.hero.cta_shop}</span>
             <Arrow
               size={18}
               className={`transition-transform duration-300 ${
-                isRtl
-                  ? "group-hover:-translate-x-1"
-                  : "group-hover:translate-x-1"
+                isRtl ? "group-hover:-translate-x-1" : "group-hover:translate-x-1"
               }`}
             />
           </Link>
 
           <Link
             href="/about"
-            className="px-10 py-4 rounded-full text-base font-semibold text-[#C9996B] border-2 border-[rgba(201,153,107,0.4)] hover:border-[rgba(201,153,107,0.8)] hover:bg-[rgba(201,153,107,0.08)] transition-all duration-300 tracking-wide"
+            className="px-10 py-4 rounded-full text-base font-semibold text-[#FF9D23] border-2 border-[rgba(255,157,35,0.45)] hover:border-[rgba(255,157,35,0.8)] hover:bg-[rgba(255,157,35,0.12)] backdrop-blur-sm transition-all duration-300 tracking-wide"
           >
             {t.hero.cta_learn}
           </Link>
         </motion.div>
 
-        {/* Floating stat badges */}
+        {/* Stats */}
         <motion.div
           {...rise(0.5)}
           className="mt-16 flex items-center justify-center gap-8 md:gap-14"
         >
           {[
-            {
-              num: "500+",
-              label: locale === "ar" ? "عميل راضٍ" : "Happy clients",
-            },
-            {
-              num: "100%",
-              label: locale === "ar" ? "أصالة مضمونة" : "Authentic",
-            },
-            {
-              num: "2h",
-              label: locale === "ar" ? "توصيل سريع" : "Fast delivery",
-            },
+            { num: "500+", label: locale === "ar" ? "عميل راضٍ" : "Happy clients" },
+            { num: "100%", label: locale === "ar" ? "أصالة مضمونة" : "Authentic" },
+            { num: "2h",   label: locale === "ar" ? "توصيل سريع" : "Fast delivery" },
           ].map((stat) => (
             <div key={stat.num} className="text-center">
-              <p className="font-display text-3xl md:text-4xl font-bold text-gold-gradient mb-0.5">
+              <p
+                className="font-display text-3xl md:text-4xl font-bold mb-0.5"
+                style={{
+                  background: "linear-gradient(135deg, #FFCC80, #FFB347, #FF9D23)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  backgroundClip: "text",
+                  filter: "drop-shadow(0 1px 6px rgba(0,0,0,0.3))",
+                }}
+              >
                 {stat.num}
               </p>
-              <p className="text-xs md:text-sm text-[#2C1810]/45 tracking-[0.15em] uppercase font-medium">
+              <p className="text-xs md:text-sm text-[rgba(255,157,35,0.85)] tracking-[0.15em] uppercase font-medium">
                 {stat.label}
               </p>
             </div>
@@ -121,10 +125,10 @@ export default function Hero() {
       <motion.div
         animate={{ y: [0, 9, 0] }}
         transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" as const }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 z-10"
       >
-        <div className="w-[1px] h-10 bg-gradient-to-b from-transparent via-[rgba(201,153,107,0.6)] to-transparent" />
-        <span className="text-xs text-[#C9996B]/50 tracking-[0.3em] uppercase">
+        <div className="w-px h-10 bg-gradient-to-b from-transparent via-[rgba(255,157,35,0.6)] to-transparent" />
+        <span className="text-xs text-[#FF9D23]/50 tracking-[0.3em] uppercase">
           {locale === "ar" ? "انزل" : "Scroll"}
         </span>
       </motion.div>
