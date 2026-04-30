@@ -9,12 +9,12 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        primary: "#0071E3",
-        secondary: "#2997FF",
-        accent: "#0071E3",
-        background: "#FFFFFF",
-        "text-primary": "#333336",
-        link: "#0066CC",
+        primary: "#4C6054",
+        secondary: "#6B8C7A",
+        accent: "#4C6054",
+        background: "#DADADA",
+        "text-primary": "#1A1A1A",
+        link: "#4C6054",
       },
       fontFamily: {
         sans: ['"SF Pro Text"', '"Helvetica Neue"', "Arial", "sans-serif"],

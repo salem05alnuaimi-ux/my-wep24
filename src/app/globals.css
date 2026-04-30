@@ -2,33 +2,33 @@
 
 /* ── Design Tokens ───────────────────────────────────────── */
 :root {
-  --color-gold-dark:   #E68900;
-  --color-gold:        #FF9D23;
-  --color-gold-light:  #FFB347;
-  --color-gold-pale:   #FFCC80;
-  --color-gold-subtle: rgba(255,157,35,0.12);
-  --color-gold-border: rgba(255,157,35,0.22);
-  --color-gold-border-strong: rgba(255,157,35,0.5);
+  --color-green-dark:   #3A4D41;
+  --color-green:        #4C6054;
+  --color-green-light:  #6B8C7A;
+  --color-green-pale:   #A8C0B4;
+  --color-green-subtle: rgba(76,96,84,0.12);
+  --color-green-border: rgba(76,96,84,0.22);
+  --color-green-border-strong: rgba(76,96,84,0.5);
 
-  --color-bg:       #F4F4F3;
-  --color-bg-footer:#E8E8E7;
+  --color-bg:       #DADADA;
+  --color-bg-footer:#C4C4C4;
   --color-text:     #1A1A1A;
 
   --font-display: "HacenNewspaper", "Amiri", Georgia, serif;
   --font-body:    "Dima", "Palestine", "Noto Naskh Arabic", "Cairo", system-ui, sans-serif;
 
-  --shadow-glow:       0 0 30px rgba(255,157,35,0.2), 0 0 60px rgba(255,157,35,0.08);
-  --shadow-glow-hover: 0 0 40px rgba(255,157,35,0.3), 0 0 80px rgba(255,157,35,0.12), inset 0 0 0 1px rgba(255,157,35,0.2);
-  --shadow-btn:        0 0 30px rgba(255,157,35,0.35);
+  --shadow-glow:       0 0 30px rgba(76,96,84,0.2), 0 0 60px rgba(76,96,84,0.08);
+  --shadow-glow-hover: 0 0 40px rgba(76,96,84,0.3), 0 0 80px rgba(76,96,84,0.12), inset 0 0 0 1px rgba(76,96,84,0.2);
+  --shadow-btn:        0 0 30px rgba(76,96,84,0.35);
 }
 
 @theme {
-  --color-primary: #FF9D23;
-  --color-secondary: #FFB347;
-  --color-accent: #FF9D23;
-  --color-background: #F4F4F3;
+  --color-primary: #4C6054;
+  --color-secondary: #6B8C7A;
+  --color-accent: #4C6054;
+  --color-background: #DADADA;
   --color-text-primary: #1A1A1A;
-  --color-link: #FF9D23;
+  --color-link: #4C6054;
 
   --font-sans: "Dima", "Noto Naskh Arabic", "Cairo", "Tajawal", system-ui, sans-serif;
   --font-display: "Hacen Newspaper", "Amiri", Georgia, serif;
@@ -59,7 +59,7 @@
   100% { background-position: 200% center; }
 }
 
-@keyframes pulse-gold {
+@keyframes pulse-green {
   0%, 100% { opacity: 0.6; }
   50% { opacity: 1; }
 }
@@ -72,7 +72,7 @@ html {
 }
 
 body {
-  background: #F4F4F3;
+  background: #DADADA;
   color: #1A1A1A;
   font-family: "Dima", "Noto Naskh Arabic", "Cairo", "Tajawal", system-ui, sans-serif;
 }
@@ -83,36 +83,36 @@ body {
 
 /* Light navbar glass */
 .glass {
-  background: rgba(244, 244, 243, 0.94);
+  background: rgba(218, 218, 218, 0.94);
   backdrop-filter: saturate(150%) blur(24px);
   -webkit-backdrop-filter: saturate(150%) blur(24px);
 }
 
-/* Glassmorphism card — warm light */
+/* Glassmorphism card — cool neutral */
 .glass-card {
   background: rgba(255, 255, 255, 0.65);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 157, 35, 0.22);
+  border: 1px solid rgba(76, 96, 84, 0.22);
 }
 
-/* Amber gradient text */
+/* Green gradient text */
 .text-gold-gradient {
-  background: linear-gradient(135deg, #FFB347 0%, #FF9D23 50%, #E68900 100%);
+  background: linear-gradient(135deg, #6B8C7A 0%, #4C6054 50%, #3A4D41 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
-/* Animated shimmer amber text */
+/* Animated shimmer green text */
 .text-gold-shimmer {
   background: linear-gradient(
     90deg,
-    #E68900 0%,
-    #FFB347 30%,
-    #FFCC80 50%,
-    #FFB347 70%,
-    #E68900 100%
+    #3A4D41 0%,
+    #6B8C7A 30%,
+    #A8C0B4 50%,
+    #6B8C7A 70%,
+    #3A4D41 100%
   );
   background-size: 200% auto;
   -webkit-background-clip: text;
@@ -121,11 +121,11 @@ body {
   animation: shimmer 4s linear infinite;
 }
 
-/* Amber ambient glow */
+/* Green ambient glow */
 .gold-glow {
   box-shadow:
-    0 0 30px rgba(255, 157, 35, 0.2),
-    0 0 60px rgba(255, 157, 35, 0.08);
+    0 0 30px rgba(76, 96, 84, 0.2),
+    0 0 60px rgba(76, 96, 84, 0.08);
 }
 
 .gold-glow-hover {
@@ -133,19 +133,19 @@ body {
 }
 .gold-glow-hover:hover {
   box-shadow:
-    0 0 40px rgba(255, 157, 35, 0.3),
-    0 0 80px rgba(255, 157, 35, 0.12),
-    inset 0 0 0 1px rgba(255, 157, 35, 0.2);
+    0 0 40px rgba(76, 96, 84, 0.3),
+    0 0 80px rgba(76, 96, 84, 0.12),
+    inset 0 0 0 1px rgba(76, 96, 84, 0.2);
 }
 
-/* Subtle horizontal amber rule */
+/* Subtle horizontal green rule */
 .gold-rule {
   height: 1px;
   background: linear-gradient(
     90deg,
     transparent,
-    rgba(255, 157, 35, 0.55) 30%,
-    rgba(255, 157, 35, 0.55) 70%,
+    rgba(76, 96, 84, 0.55) 30%,
+    rgba(76, 96, 84, 0.55) 70%,
     transparent
   );
 }
@@ -167,19 +167,19 @@ body {
   width: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #E8E8E7;
+  background: #C4C4C4;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 157, 35, 0.4);
+  background: rgba(76, 96, 84, 0.4);
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 157, 35, 0.65);
+  background: rgba(76, 96, 84, 0.65);
 }
 
 /* Selection */
 ::selection {
-  background: rgba(255, 157, 35, 0.3);
+  background: rgba(76, 96, 84, 0.3);
   color: #1A1A1A;
 }
 
