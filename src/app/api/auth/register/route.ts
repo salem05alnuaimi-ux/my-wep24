@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
 import { User } from "@/lib/models/User";
 import { hashPassword, signToken } from "@/lib/auth";
+import { sendWelcomeEmail } from "@/lib/email";
 
 export async function POST(req: Request) {
   try {
@@ -17,6 +18,11 @@ export async function POST(req: Request) {
     const user = await User.create({ name, email, password: hashed, phone });
 
     const token = signToken({ id: user._id.toString(), role: user.role });
+
+    // Fire-and-forget welcome email
+    if (process.env.RESEND_API_KEY) {
+      sendWelcomeEmail(user.email, user.name).catch((e) => console.error("[Welcome Email]", e));
+    }
 
     return NextResponse.json({
       token,
