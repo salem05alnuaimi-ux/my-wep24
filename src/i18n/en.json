@@ -29,7 +29,10 @@
     "ring": "Rings",
     "makeup": "Makeup",
     "bags": "Bags",
-    "boxes": "Boxes"
+    "boxes": "Boxes",
+    "perfumes": "Perfumes",
+    "slippers": "Slippers",
+    "wallets": "Wallets"
   },
   "featured": {
     "title": "Bestsellers",

@@ -29,7 +29,10 @@
     "ring": "خواتم",
     "makeup": "مكياج",
     "bags": "شنط",
-    "boxes": "بوكسات"
+    "boxes": "بوكسات",
+    "perfumes": "عطور",
+    "slippers": "نعلان",
+    "wallets": "محافظ"
   },
   "featured": {
     "title": "الأكثر مبيعاً",

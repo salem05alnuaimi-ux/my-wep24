@@ -60,7 +60,10 @@ export type ProductCategory =
   | "ring"
   | "makeup"
   | "bags"
-  | "boxes";
+  | "boxes"
+  | "perfumes"
+  | "slippers"
+  | "wallets";
 
 export type SortOption =
   | "newest"

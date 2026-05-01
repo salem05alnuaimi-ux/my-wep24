@@ -1,7 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "Bash(git checkout *)"
+      "Bash(git checkout *)",
+      "Bash(npm run dev *)",
+      "mcp__claude_ai_Google_Drive__search_files"
     ]
   }
 }
