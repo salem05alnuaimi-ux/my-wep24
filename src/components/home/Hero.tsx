@@ -1,13 +1,10 @@
 "use client";
 
-import dynamic from "next/dynamic";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight, ArrowLeft } from "lucide-react";
 import { useLanguage } from "@/store/languageStore";
 import Button from "@/components/ui/Button";
-
-const HeroBackground = dynamic(() => import("./HeroBackground"), { ssr: false });
 
 const rise = (delay = 0) => ({
   initial: { opacity: 0, y: 28 },
@@ -21,10 +18,7 @@ export default function Hero() {
   const isRtl = locale === "ar";
 
   return (
-    <section className="relative min-h-screen flex flex-col items-center justify-center pt-20 overflow-hidden">
-      {/* 3D Blob Background */}
-      <HeroBackground />
-
+    <section className="relative min-h-screen flex flex-col items-center justify-center pt-20 overflow-hidden pointer-events-none">
       {/* Soft radial overlay so text stays readable at center */}
       <div
         className="absolute inset-0 pointer-events-none z-[1]"
@@ -68,7 +62,7 @@ export default function Hero() {
         {/* CTAs */}
         <motion.div
           {...rise(0.35)}
-          className="flex flex-col sm:flex-row items-center justify-center gap-4"
+          className="flex flex-col sm:flex-row items-center justify-center gap-4 pointer-events-auto"
         >
           <Link href="/products">
             <Button variant="primary" size="lg" className="group" as="span">
