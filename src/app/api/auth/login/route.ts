@@ -33,6 +33,9 @@ export async function POST(req: Request) {
     });
   } catch (err) {
     console.error("[POST /api/auth/login]", err);
-    return NextResponse.json({ error: "Server error" }, { status: 500 });
+    const message = process.env.NODE_ENV === "development"
+      ? (err instanceof Error ? err.message : String(err))
+      : "Server error";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

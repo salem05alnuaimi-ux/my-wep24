@@ -12,7 +12,8 @@
       "Bash(npm run *)",
       "Read(//c/Users/H7/Downloads/Compressed/Compressed/Accessories _ اكسسوارات/**)",
       "Read(//c/Users/H7/Downloads/Compressed/Compressed/Bag _ شنط_/**)",
-      "Read(//c/Users/H7/Downloads/Compressed/Compressed/Box _ بوكسات/**)"
+      "Read(//c/Users/H7/Downloads/Compressed/Compressed/Box _ بوكسات/**)",
+      "Bash(npm install *)"
     ]
   }
 }

@@ -41,7 +41,7 @@ export default function Footer() {
                 <Camera size={16} />
               </a>
               <a
-                href="https://wa.me/96800000000"
+                href="https://wa.me/96894924300"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-10 h-10 rounded-full glass-card flex items-center justify-center text-[#2C1810]/40 hover:text-[#C9996B] hover:border-[rgba(201,153,107,0.5)] transition-all duration-300"

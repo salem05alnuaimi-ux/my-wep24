@@ -3,6 +3,7 @@ import "./globals.css";
 import { ToastContainer } from "@/components/ui/Toast";
 import CartDrawer from "@/components/cart/CartDrawer";
 import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
+import { Analytics } from "@vercel/analytics/next";
 
 export const metadata: Metadata = {
   title: "YEZHABK | يزهابك - ثقة تُبنى وتميّز يُحترم",
@@ -66,6 +67,7 @@ export default function RootLayout({
         {children}
         <CartDrawer />
         <ToastContainer />
+        <Analytics />
       </body>
     </html>
   );

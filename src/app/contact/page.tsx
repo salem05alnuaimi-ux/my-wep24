@@ -14,8 +14,8 @@ export default function ContactPage() {
     {
       icon: MessageCircle,
       title: "WhatsApp",
-      value: "+968 0000 0000",
-      href: "https://wa.me/96800000000",
+      value: "+968 9492 4300",
+      href: "https://wa.me/96894924300",
       color: "bg-green-100 text-green-600",
     },
     {
