@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense } from "react";
+import { Suspense, useEffect } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { CheckCircle2, Package } from "lucide-react";
@@ -9,11 +9,25 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import FloatingShapes from "@/components/effects/FloatingShapes";
 import { useLanguage } from "@/store/languageStore";
+import { useOrders } from "@/store/orderStore";
+import { useCart } from "@/store/cartStore";
 
 function SuccessContent() {
   const { locale } = useLanguage();
   const searchParams = useSearchParams();
   const orderId = searchParams.get("order");
+  const sessionId = searchParams.get("session_id");
+  const { updateStatus } = useOrders();
+  const { clearCart } = useCart();
+
+  useEffect(() => {
+    if (sessionId && orderId) {
+      // Coming from Stripe — mark paid and clear cart
+      updateStatus(orderId, "processing");
+      clearCart();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="container-apple max-w-2xl text-center">

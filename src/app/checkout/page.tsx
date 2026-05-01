@@ -26,6 +26,7 @@ export default function CheckoutPage() {
   const { show } = useToast();
 
   const [payment, setPayment] = useState<PaymentMethod>("cod");
+  const [loading, setLoading] = useState(false);
 
   const {
     register,
@@ -51,6 +52,13 @@ export default function CheckoutPage() {
   const total = getTotal();
 
   const onSubmit = async (shippingData: ShippingInput) => {
+    if (payment === "paypal") {
+      show(locale === "ar" ? "باي بال غير متاح حالياً، اختر طريقة أخرى" : "PayPal not available yet, please choose another method", "error");
+      return;
+    }
+
+    setLoading(true);
+
     const order = createOrder({
       userId: user?.id,
       items,
@@ -60,15 +68,31 @@ export default function CheckoutPage() {
       shippingCost,
       total,
     });
-    clearCart();
 
-    // Fire-and-forget — don't block checkout if email fails
+    if (payment === "card") {
+      try {
+        const res = await fetch("/api/checkout/stripe", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ items, orderId: order.id, email: shippingData.email }),
+        });
+        if (!res.ok) throw new Error("Stripe session failed");
+        const { url } = await res.json();
+        window.location.href = url;
+      } catch {
+        show(locale === "ar" ? "خطأ في بوابة الدفع، حاول مرة أخرى" : "Payment gateway error, please try again", "error");
+        setLoading(false);
+      }
+      return;
+    }
+
+    // COD flow
+    clearCart();
     fetch("/api/notify/order", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ order }),
     }).catch(() => {});
-
     show(locale === "ar" ? "تم إنشاء طلبك بنجاح! 🎉" : "Order placed successfully! 🎉", "success");
     router.push(`/checkout/success?order=${order.id}`);
   };
@@ -157,7 +181,7 @@ export default function CheckoutPage() {
                   {[
                     { value: "cod" as const, icon: Banknote, label: locale === "ar" ? "الدفع عند الاستلام" : "Cash on Delivery", desc: locale === "ar" ? "ادفع نقداً عند توصيل الطلب" : "Pay in cash when you receive" },
                     { value: "card" as const, icon: CreditCard, label: locale === "ar" ? "بطاقة (Stripe)" : "Card (Stripe)", desc: locale === "ar" ? "Visa, Mastercard, Apple Pay" : "Visa, Mastercard, Apple Pay" },
-                    { value: "paypal" as const, icon: CreditCard, label: "PayPal", desc: locale === "ar" ? "ادفع بحسابك في باي بال" : "Pay with your PayPal account" },
+                    { value: "paypal" as const, icon: CreditCard, label: locale === "ar" ? "PayPal (قريباً)" : "PayPal (Coming soon)", desc: locale === "ar" ? "ادفع بحسابك في باي بال" : "Pay with your PayPal account" },
                   ].map((method) => (
                     <label
                       key={method.value}
@@ -194,10 +218,17 @@ export default function CheckoutPage() {
 
               <button
                 type="submit"
-                className="w-full bg-primary text-white py-4 rounded-full font-medium hover:bg-link transition-colors flex items-center justify-center gap-2"
+                disabled={loading}
+                className="w-full bg-primary text-white py-4 rounded-full font-medium hover:bg-link transition-colors flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
               >
-                <ShieldCheck size={18} />
-                {locale === "ar" ? `تأكيد الطلب (${total.toFixed(3)} ر.ع)` : `Place Order (${total.toFixed(3)} OMR)`}
+                {loading ? (
+                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                ) : (
+                  <ShieldCheck size={18} />
+                )}
+                {payment === "card"
+                  ? (locale === "ar" ? `الدفع ببطاقة Stripe ←` : `Pay with Card (Stripe) →`)
+                  : (locale === "ar" ? `تأكيد الطلب (${total.toFixed(3)} ر.ع)` : `Place Order (${total.toFixed(3)} OMR)`)}
               </button>
             </form>
 
