@@ -25,6 +25,12 @@ function SuccessContent() {
       // Coming from Stripe — mark paid and clear cart
       updateStatus(orderId, "processing");
       clearCart();
+      // Update status in DB
+      fetch(`/api/orders/${orderId}/confirm`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sessionId }),
+      }).catch(() => {});
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

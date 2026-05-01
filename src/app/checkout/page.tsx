@@ -21,7 +21,7 @@ export default function CheckoutPage() {
   const { locale, t } = useLanguage();
   const router = useRouter();
   const { items, getSubtotal, getShipping, getTotal, clearCart } = useCart();
-  const { user } = useAuth();
+  const { user, token } = useAuth();
   const { createOrder } = useOrders();
   const { show } = useToast();
 
@@ -69,12 +69,47 @@ export default function CheckoutPage() {
       total,
     });
 
+    // Save order to database
+    let dbOrderId = order.id;
+    try {
+      const dbRes = await fetch("/api/orders", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({
+          userId: user?.id,
+          items: items.map((item) => ({
+            productId: item.productId,
+            name: item.name.ar || item.name.en,
+            price: item.price,
+            quantity: item.quantity,
+            image: item.image,
+          })),
+          total,
+          shippingAddress: {
+            name: shippingData.fullName,
+            phone: shippingData.phone,
+            address: shippingData.address,
+            city: shippingData.city,
+          },
+        }),
+      });
+      if (dbRes.ok) {
+        const { order: saved } = await dbRes.json();
+        dbOrderId = saved._id;
+      }
+    } catch {
+      // Non-fatal: order still proceeds locally
+    }
+
     if (payment === "card") {
       try {
         const res = await fetch("/api/checkout/stripe", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ items, orderId: order.id, email: shippingData.email }),
+          body: JSON.stringify({ items, orderId: dbOrderId, email: shippingData.email }),
         });
         if (!res.ok) throw new Error("Stripe session failed");
         const { url } = await res.json();
@@ -94,7 +129,7 @@ export default function CheckoutPage() {
       body: JSON.stringify({ order }),
     }).catch(() => {});
     show(locale === "ar" ? "تم إنشاء طلبك بنجاح! 🎉" : "Order placed successfully! 🎉", "success");
-    router.push(`/checkout/success?order=${order.id}`);
+    router.push(`/checkout/success?order=${dbOrderId}`);
   };
 
   if (items.length === 0) return null;
