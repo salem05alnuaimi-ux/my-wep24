@@ -50,7 +50,7 @@ export default function CheckoutPage() {
   const shippingCost = getShipping();
   const total = getTotal();
 
-  const onSubmit = (shippingData: ShippingInput) => {
+  const onSubmit = async (shippingData: ShippingInput) => {
     const order = createOrder({
       userId: user?.id,
       items,
@@ -61,6 +61,14 @@ export default function CheckoutPage() {
       total,
     });
     clearCart();
+
+    // Fire-and-forget — don't block checkout if email fails
+    fetch("/api/notify/order", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ order }),
+    }).catch(() => {});
+
     show(locale === "ar" ? "تم إنشاء طلبك بنجاح! 🎉" : "Order placed successfully! 🎉", "success");
     router.push(`/checkout/success?order=${order.id}`);
   };

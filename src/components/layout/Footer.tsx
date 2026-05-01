@@ -20,7 +20,7 @@ export default function Footer() {
       />
 
       <div className="container-apple py-16">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-10">
           {/* Brand column */}
           <div className="md:col-span-2">
             <h3 className="font-display text-3xl font-bold tracking-widest text-gold-gradient mb-4">
@@ -76,6 +76,30 @@ export default function Footer() {
               <li>
                 <Link href="/wishlist" className="text-[#2C1810]/50 hover:text-[#C9996B] transition-colors duration-300 font-medium">
                   {t.nav.wishlist}
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Legal */}
+          <div>
+            <h4 className="text-sm text-[#C9996B]/70 font-semibold tracking-[0.2em] uppercase mb-5">
+              {t.footer.legal_title}
+            </h4>
+            <ul className="space-y-3 text-base">
+              <li>
+                <Link href="/privacy" className="text-[#2C1810]/50 hover:text-[#C9996B] transition-colors duration-300 font-medium">
+                  {t.footer.privacy}
+                </Link>
+              </li>
+              <li>
+                <Link href="/terms" className="text-[#2C1810]/50 hover:text-[#C9996B] transition-colors duration-300 font-medium">
+                  {t.footer.terms}
+                </Link>
+              </li>
+              <li>
+                <Link href="/return-policy" className="text-[#2C1810]/50 hover:text-[#C9996B] transition-colors duration-300 font-medium">
+                  {t.footer.returns}
                 </Link>
               </li>
             </ul>
